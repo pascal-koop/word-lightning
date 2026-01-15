@@ -4,15 +4,15 @@ Ein React + TypeScript Spiel, bei dem Spieler zu einem gegebenen Buchstaben und 
 
 ## Geplante Features
 
-### 1. SQLite Datenbank für Fragen
+### 1. IndexedDB + Dexie Datenbank für Fragen
 
-Die Fragen sollen zukünftig in einer SQLite-Datenbank gespeichert werden, anstatt in einem einfachen Array. Dies ermöglicht:
+Die Fragen sollen zukünftig in einer IndexedDB-Datenbank gespeichert werden, anstatt in einem einfachen Array. Dies ermöglicht:
 - Persistente Speicherung der Fragen
 - Effiziente Abfragen und Verwaltung
 - Bessere Skalierbarkeit für größere Fragensammlungen
 
 **Technische Umsetzung:**
-- Erstellung einer SQLite-Datenbank
+- Erstellung einer IndexedDB-Datenbank mit Dexie.js
 - Migration der aktuellen Fragen in die Datenbank
 - Implementierung von Datenbankzugriffsfunktionen
 
@@ -30,7 +30,7 @@ Spieler sollen die Möglichkeit erhalten, eigene Fragen zu erstellen und ins Spi
 - **Löschfunktion:** Einzelne benutzerdefinierte Fragen können gelöscht werden
 
 **Technische Umsetzung:**
-- Erstellung der Tabelle `user_questions` in der SQLite-Datenbank
+- Erstellung der Tabelle `user_questions` in der IndexedDB-Datenbank
 - UI-Komponente für die Verwaltung benutzerdefinierter Fragen
 - CRUD-Operationen (Create, Read, Update, Delete) für benutzerdefinierte Fragen
 
@@ -65,4 +65,4 @@ Das Spiel verwendet derzeit:
 - **React** - UI-Framework
 - **TypeScript** - Typsichere Programmierung
 - **Vite** - Build-Tool und Development-Server
-- **SQLite** (geplant) - Datenbank für Fragenverwaltung
+- **IndexedDB + Dexie** (geplant) - Datenbank für Fragenverwaltung
