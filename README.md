@@ -60,7 +60,7 @@ Das Spiel verwendet derzeit:
 
 ## Technologie-Stack
 
-- **React** - UI-Framework
-- **TypeScript** - Typsichere Programmierung
-- **Vite** - Build-Tool und Development-Server
-- **IndexedDB + Dexie** (geplant) - Datenbank für Fragenverwaltung
+- React + Tailwind CSS + framer-motion
+- TypeScript
+- Vite
+- IndexedDB + Dexie (geplant)
