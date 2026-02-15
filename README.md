@@ -16,8 +16,6 @@ Die Fragen sollen zukünftig in einer IndexedDB-Datenbank gespeichert werden, an
 - Migration der aktuellen Fragen in die Datenbank
 - Implementierung von Datenbankzugriffsfunktionen
 
----
-
 ### 2. Benutzerdefinierte Fragen (User Questions)
 
 Spieler sollen die Möglichkeit erhalten, eigene Fragen zu erstellen und ins Spiel zu integrieren.

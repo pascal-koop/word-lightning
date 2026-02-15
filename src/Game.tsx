@@ -1,4 +1,4 @@
-import { createPairs } from "./game/logic";
+/* import { createPairs } from "./game/logic";
 import { useState } from "react";
 import Button from "./components/Button";
 export default function Game() {
@@ -13,7 +13,7 @@ export default function Game() {
   };
   return (
     <div className="App">
-      <h1>Hello World!</h1>
+      <h1>Wort Blitz mit React</h1>
       {
         // <button onClick={handleButtonClick}>Klick mich</button>
       }
@@ -27,4 +27,22 @@ export default function Game() {
       )}
     </div>
   );
+} */
+import { useGame } from "./hooks/useGame.ts";
+import SetupScreen from "./components/screens/SetupScreen.tsx";
+import PlayScreen from "./components/screens/PlaySreen.tsx";
+import ResultScreen from "./components/screens/ResultScreen.tsx";
+
+export default function Game() {
+  const { state, startGame, endGame, nextPair } = useGame();
+
+  if (state.phase === "setup") {
+    return <SetupScreen onStart={startGame} />;
+  }
+
+  if (state.phase === "playing" && state.pairs) {
+    return <PlayScreen pair={state.pairs} onEnd={endGame} onNext={nextPair} />;
+  }
+
+  return <ResultScreen onRestart={startGame} />;
 }
