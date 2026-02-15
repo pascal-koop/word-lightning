@@ -1,4 +1,7 @@
-export const initialState: { phase: string; pairs: string[] } = {
+export const initialState: {
+  phase: string;
+  pairs: { letter: string; question: string } | null;
+} = {
   phase: "setup",
-  pairs: [],
+  pairs: null,
 };
