@@ -60,7 +60,7 @@ Das Spiel verwendet derzeit:
 
 ## Technologie-Stack
 
-- React + Tailwind CSS + framer-motion
+- React + Tailwind CSS + motion.dev
 - TypeScript
 - Vite
 - IndexedDB + Dexie (geplant)
