@@ -7,6 +7,7 @@ function App() {
      * </>
      */
     <main className="App">
+      <h1>Word Blitz</h1>
       <Game />
     </main>
   );
