@@ -2,7 +2,6 @@ import { useGame } from "./hooks/useGame.ts";
 import SetupScreen from "./components/screens/SetupScreen.tsx";
 import PlayScreen from "./components/screens/PlaySreen.tsx";
 import ResultScreen from "./components/screens/ResultScreen.tsx";
-
 export default function Game() {
   const { state, startGame, endGame, nextPair } = useGame();
 
