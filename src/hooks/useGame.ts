@@ -10,5 +10,9 @@ export function useGame() {
     startGame: () => dispatch({ type: "START_GAME" }),
     endGame: () => dispatch({ type: "END_GAME" }),
     nextPair: () => dispatch({ type: "NEXT_PAIR" }),
+    goToAddQuestion: () => dispatch({ type: "GO_TO_ADD_QUESTION" }),
+    goToSetup: () => dispatch({ type: "GO_TO_SETUP" }),
+    addQuestion: (question: string) =>
+      dispatch({ type: "ADD_QUESTION", payload: question }),
   };
 }
