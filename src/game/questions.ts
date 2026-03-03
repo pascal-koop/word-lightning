@@ -1,5 +1,5 @@
 export const QUESTIONS: string[] = [
-  "Findet man in der Küche",
+  "In der Küche",
   "Braucht man zum Kochen",
   "Ist essbar",
   "Ist ein Gewürz",
@@ -10,8 +10,8 @@ export const QUESTIONS: string[] = [
   "Benutzt man zum Backen",
   "Ist ein Obst",
   "Ist ein Gemüse",
-  "Findet man im Wohnzimmer",
-  "Steht im Schlafzimmer",
+  "Im Wohnzimmer",
+  "Im Schlafzimmer",
   "Ist im Badezimmer",
   "Hängt an der Wand",
   "Ist aus Holz",
@@ -24,5 +24,5 @@ export const QUESTIONS: string[] = [
   "Ist ein Insekt",
   "Ist ein Vogel",
   "Ist ein Fahrzeug",
-  "Kann fliegen"
+  "Kann fliegen",
 ];

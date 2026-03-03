@@ -1,5 +1,3 @@
-import { QUESTIONS } from "./questions.ts";
-
 const ALPHABET: string[] = [
   "A",
   "B",
@@ -39,8 +37,8 @@ const shuffleArray = (arr: Array<string>) => {
   return arr[0];
 };
 
-export function createPairs() {
-  const question: string = shuffleArray(QUESTIONS);
+export function createPairs(questions: string[]) {
+  const question: string = shuffleArray(questions);
   const letter: string = shuffleArray(ALPHABET);
   return { letter, question };
 }
