@@ -79,8 +79,8 @@ const Card = ({
         rotate,
         transition: "0.125s transform",
         boxShadow: isFrontCard
-          ? "0 4px 18px -4px rgba(15, 23, 42, 0.13)"
-          : "0 2px 8px -2px rgba(15, 23, 42, 0.10)",
+          ? "0 24px 60px -20px rgba(15, 23, 42, 0.45)"
+          : "0 14px 30px -18px rgba(15, 23, 42, 0.35)",
       }}
       animate={{
         scale: isFrontCard ? 1.02 : 0.98,
