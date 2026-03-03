@@ -1,4 +1,5 @@
 import Game from "./Game";
+import wordBlitzCenter from "./assets/word_blitz_center.png";
 function App() {
   return (
     <main className="App min-h-screen px-4 py-6 sm:px-8">
@@ -6,7 +7,7 @@ function App() {
         <div className="flex items-center gap-1">
           <div>
             <img
-              src="/src/assets/word_blitz_center.png"
+              src={wordBlitzCenter}
               alt="Word Blitz"
               className="h-36 w-36 z-10 object-contain scale-125"
             />

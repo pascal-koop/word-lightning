@@ -1,6 +1,6 @@
 import { motion, useMotionValue, useTransform } from "motion/react";
 import { useEffect, useState, type Dispatch, type SetStateAction } from "react";
-
+import wordBlitzCenter from "../assets/word_blitz_center.png";
 const SwipeCards = ({
   onSwipe,
   letter,
@@ -98,7 +98,7 @@ const Card = ({
       </h2>
 
       <img
-        src="/src/assets/word_blitz_center.png"
+        src={wordBlitzCenter}
         alt="word blitz"
         className="pointer-events-none absolute left-1/2 top-1/2 h-56 w-56 -translate-x-1/2 -translate-y-1/2 object-contain opacity-80 drop-shadow-xl"
       />
