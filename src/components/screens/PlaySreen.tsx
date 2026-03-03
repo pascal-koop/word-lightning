@@ -12,12 +12,12 @@ export default function PlayScreen({
   onNext: () => void;
 }) {
   return (
-    <div className="flex flex-col items-center justify-center h-screen">
+    <div className="flex flex-col items-center justify-center h-screen gap-9">
       <SwipeCards onSwipe={onNext} questionsCount={questionsCount} {...pair} />
-      {/* <h2>Buchstabe: {pair.letter}</h2>
-      <p>Frage: {pair.question}</p> */}
-      <button onClick={onEnd}>Ende</button>
-      {/* <button onClick={onNext}>Nächste Frage</button> */}
+
+      <button className="bg-red-500 text-white" onClick={onEnd}>
+        End Game
+      </button>
     </div>
   );
 }
