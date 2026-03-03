@@ -12,9 +12,7 @@ const SwipeCards = ({
   question: string;
   questionsCount: number;
 }) => {
-  const [cards, setCards] = useState<Card[]>(
-    createCardData(questionsCount),
-  );
+  const [cards, setCards] = useState<Card[]>(createCardData(questionsCount));
 
   useEffect(() => {
     setCards(createCardData(questionsCount));
@@ -58,7 +56,7 @@ const Card = ({
   const rotateRaw = useTransform(x, [-100, 0, 100], [-10, 0, 10]);
   const isFrontCard = id === cards[cards.length - 1].id;
   const rotate = useTransform(() => {
-    const offSet = isFrontCard ? 0 : id % 2 ? 2 : -2;
+    const offSet = isFrontCard ? 0 : id % 2 ? 1 : -1;
     return `${rotateRaw.get() + offSet}deg`;
   });
   const handleDragEnd = () => {
@@ -72,7 +70,7 @@ const Card = ({
   };
   return (
     <motion.div
-      className="h-96 w-72 object-cover bg-gray-200 border-2 border-gray-300 rounded-lg hover:cursor-grab active:cursor-grabbing origin-bottom"
+      className="h-96 w-72 relative inline-block antialiased transform-gpu overflow-hidden bg-[#FAF9F6] ring-2 ring-black rounded-lg hover:cursor-grab active:cursor-grabbing origin-bottom"
       style={{
         gridRow: 1,
         gridColumn: 1,
@@ -91,8 +89,19 @@ const Card = ({
       dragConstraints={{ left: 0, right: 0 }}
       onDragEnd={handleDragEnd}
     >
-      <h2 className="text-2xl font-bold">{letter}</h2>
-      <p className="text-sm text-gray-500">{question}</p>
+      <h2 className=" text-3xl text-blue-800 font-extrabold absolute top-1/2 left-[15%] w-48 -translate-x-1/2 -translate-y-1/2 -rotate-90 whitespace-nowrap text-center">
+        {letter} <span className="text-lg text-black">{question}</span>
+      </h2>
+
+      <img
+        src="/src/assets/word_blitz_center.png"
+        alt="word blitz"
+        className="w-64 h-64 object-contain bg-transparent opacity-80 pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
+      />
+
+      <h2 className="text-3xl text-blue-800 font-extrabold absolute top-1/2 right-[15%] w-48 translate-x-1/2 -translate-y-1/2 rotate-90 whitespace-nowrap text-center">
+        {letter} <span className="text-lg text-black">{question}</span>
+      </h2>
     </motion.div>
   );
 };

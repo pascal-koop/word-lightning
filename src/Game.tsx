@@ -45,5 +45,5 @@ export default function Game() {
     );
   }
 
-  return <ResultScreen onRestart={startGame} />;
+  return <ResultScreen onRestart={goToSetup} />;
 }
