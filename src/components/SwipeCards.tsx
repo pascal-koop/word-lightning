@@ -51,6 +51,7 @@ const Card = ({
   question: string;
 }) => {
   const x = useMotionValue(0);
+  const [isDragging, setIsDragging] = useState(false);
 
   const opacity = useTransform(x, [-150, 0, 150], [0.9, 1, 0.9]);
   const rotateRaw = useTransform(x, [-100, 0, 100], [-10, 0, 10]);
@@ -77,9 +78,12 @@ const Card = ({
         x,
         opacity,
         rotate,
-        transition: "0.125s transform",
+        willChange: "transform",
+        touchAction: "pan-y",
         boxShadow: isFrontCard
-          ? "0 4px 18px -4px rgba(15, 23, 42, 0.13)"
+          ? isDragging
+            ? "0 2px 10px -4px rgba(15, 23, 42, 0.15)"
+            : "0 4px 18px -4px rgba(15, 23, 42, 0.13)"
           : "0 2px 8px -2px rgba(15, 23, 42, 0.10)",
       }}
       animate={{
@@ -87,21 +91,31 @@ const Card = ({
       }}
       drag="x"
       dragConstraints={{ left: 0, right: 0 }}
-      onDragEnd={handleDragEnd}
+      onDragStart={() => setIsDragging(true)}
+      onDragEnd={() => {
+        setIsDragging(false);
+        handleDragEnd();
+      }}
     >
-      <div className="absolute inset-0 bg-linear-to-br from-indigo-50/70 via-white to-pink-50/70" />
-      <div className="absolute left-4 top-4 h-10 w-10 rounded-full bg-indigo-500/20 blur-xl" />
-      <div className="absolute bottom-6 right-6 h-14 w-14 rounded-full bg-pink-400/20 blur-2xl" />
+      {!isDragging && (
+        <>
+          <div className="absolute inset-0 bg-linear-to-br from-indigo-50/70 via-white to-pink-50/70" />
+          <div className="absolute left-4 top-4 h-10 w-10 rounded-full bg-indigo-500/20 blur-xl" />
+          <div className="absolute bottom-6 right-6 h-14 w-14 rounded-full bg-pink-400/20 blur-2xl" />
+        </>
+      )}
 
       <h2 className="absolute top-1/2 left-[15%] w-48 -translate-x-1/2 -translate-y-1/2 -rotate-90 whitespace-nowrap text-center text-3xl font-black text-indigo-700">
         {letter} <span className="text-lg text-slate-800">{question}</span>
       </h2>
 
-      <img
-        src={wordBlitzCenter}
-        alt="word blitz"
-        className="pointer-events-none absolute left-1/2 top-1/2 h-56 w-56 -translate-x-1/2 -translate-y-1/2 object-contain opacity-80 drop-shadow-xl"
-      />
+      {!isDragging && (
+        <img
+          src={wordBlitzCenter}
+          alt="word blitz"
+          className="pointer-events-none absolute left-1/2 top-1/2 h-56 w-56 -translate-x-1/2 -translate-y-1/2 object-contain opacity-80 drop-shadow-xl"
+        />
+      )}
 
       <h2 className="absolute top-1/2 right-[15%] w-48 translate-x-1/2 -translate-y-1/2 rotate-90 whitespace-nowrap text-center text-3xl font-black text-indigo-700">
         {letter} <span className="text-lg text-slate-800">{question}</span>
