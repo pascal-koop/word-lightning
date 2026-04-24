@@ -12,7 +12,7 @@
   --color-primary-background-border: #4f46e5;
 }
 button {
-  @apply rounded-xl px-4 py-2 font-semibold shadow-sm transition bg-primary text-primary-text;
+  @apply rounded-xl px-2 py-2 font-semibold shadow-sm transition bg-primary text-primary-text;
 }
 
 button:hover {

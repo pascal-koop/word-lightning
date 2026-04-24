@@ -11,8 +11,8 @@ type Option = {
 };
 
 const OPTIONS: Option[] = [
-  { value: "default", label: "Only default" },
-  { value: "custom", label: "Only custom" },
+  { value: "default", label: "Default" },
+  { value: "custom", label: "Custom" },
   { value: "both", label: "Both" },
 ];
 
