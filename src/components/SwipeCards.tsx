@@ -97,8 +97,6 @@ const Card = ({
     >
       <div className="absolute inset-0 bg-linear-to-br from-indigo-50/70 via-white to-pink-50/70" />
 
-      {/* Teure Blur-Kreise nur auf der sichtbaren Karte rendern.
-          Hintere Karten sind ohnehin fast komplett verdeckt. */}
       {isFrontCard && (
         <>
           <div className="absolute left-4 top-4 h-10 w-10 rounded-full bg-indigo-500/20 blur-xl" />
