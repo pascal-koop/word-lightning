@@ -4,7 +4,7 @@ A fast, playful word-association game built with **React 19**, **TypeScript** an
 The player is shown a random letter together with a random question (for example
 `M – Is in the kitchen`) and has to come up with a matching word that starts with
 that letter. Cards can be swiped away to get the next pair, and players can manage
-their own collection of questions on top of the built-in ones.
+their own collection of questions on top of the built-in ones, maybe spicy ones for a more adult experience. 
 
 ---
 
