@@ -7,7 +7,7 @@ that letter. Cards can be swiped away to get the next pair, and players can mana
 their own collection of questions on top of the built-in ones, maybe spicy ones for a more adult experience. 
 
 ---
-# [word-lightning](https://word-blitz-two.vercel.app/) Play it!
+# [Word-lightning](https://word-blitz-two.vercel.app/) Play it!
 ## 1. What the app does (non-technical summary)
 
 Word Lightning is a small, mobile-first browser game that runs entirely on the
