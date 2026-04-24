@@ -2,9 +2,6 @@ import { motion, useMotionValue, useTransform } from "motion/react";
 import { useEffect, useState, type Dispatch, type SetStateAction } from "react";
 import wordBlitzCenter from "../assets/word_blitz_center.png";
 
-// Wie viele Karten gleichzeitig im DOM liegen dürfen.
-// Alle anderen existieren nur im State und werden nicht gezeichnet.
-// Das ist der Haupt-Trick gegen das Ruckeln auf dem Handy.
 const VISIBLE_CARDS = 3;
 
 const SwipeCards = ({
@@ -23,9 +20,7 @@ const SwipeCards = ({
   useEffect(() => {
     setCards(createCardData(questionsCount));
   }, [questionsCount]);
-  // slice(-3) nimmt die letzten 3 Einträge. Da die "Front-Karte"
-  // der letzte Eintrag im Array ist, sind das genau die obersten
-  // 3 Karten im Stapel. Das Original-Array wird dabei nicht verändert.
+
   const visibleCards = cards.slice(-VISIBLE_CARDS);
 
   return (
