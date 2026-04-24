@@ -1,6 +1,12 @@
 import { motion, useMotionValue, useTransform } from "motion/react";
 import { useEffect, useState, type Dispatch, type SetStateAction } from "react";
 import wordBlitzCenter from "../assets/word_blitz_center.png";
+
+// Wie viele Karten gleichzeitig im DOM liegen dürfen.
+// Alle anderen existieren nur im State und werden nicht gezeichnet.
+// Das ist der Haupt-Trick gegen das Ruckeln auf dem Handy.
+const VISIBLE_CARDS = 3;
+
 const SwipeCards = ({
   onSwipe,
   letter,
@@ -17,9 +23,14 @@ const SwipeCards = ({
   useEffect(() => {
     setCards(createCardData(questionsCount));
   }, [questionsCount]);
+  // slice(-3) nimmt die letzten 3 Einträge. Da die "Front-Karte"
+  // der letzte Eintrag im Array ist, sind das genau die obersten
+  // 3 Karten im Stapel. Das Original-Array wird dabei nicht verändert.
+  const visibleCards = cards.slice(-VISIBLE_CARDS);
+
   return (
     <div className="grid place-items-center">
-      {cards.map((card) => {
+      {visibleCards.map((card) => {
         return (
           <Card
             key={card.id}
@@ -80,7 +91,7 @@ const Card = ({
         transition: "0.125s transform",
         boxShadow: isFrontCard
           ? "0 24px 60px -20px rgba(15, 23, 42, 0.45)"
-          : "0 14px 30px -18px rgba(15, 23, 42, 0.35)",
+          : "none",
       }}
       animate={{
         scale: isFrontCard ? 1.02 : 0.98,
@@ -90,8 +101,15 @@ const Card = ({
       onDragEnd={handleDragEnd}
     >
       <div className="absolute inset-0 bg-linear-to-br from-indigo-50/70 via-white to-pink-50/70" />
-      <div className="absolute left-4 top-4 h-10 w-10 rounded-full bg-indigo-500/20 blur-xl" />
-      <div className="absolute bottom-6 right-6 h-14 w-14 rounded-full bg-pink-400/20 blur-2xl" />
+
+      {/* Teure Blur-Kreise nur auf der sichtbaren Karte rendern.
+          Hintere Karten sind ohnehin fast komplett verdeckt. */}
+      {isFrontCard && (
+        <>
+          <div className="absolute left-4 top-4 h-10 w-10 rounded-full bg-indigo-500/20 blur-xl" />
+          <div className="absolute bottom-6 right-6 h-14 w-14 rounded-full bg-pink-400/20 blur-2xl" />
+        </>
+      )}
 
       <h2 className="absolute top-1/2 left-[15%] w-48 -translate-x-1/2 -translate-y-1/2 -rotate-90 whitespace-nowrap text-center text-3xl font-black text-indigo-700">
         {letter} <span className="text-lg text-slate-800">{question}</span>
@@ -100,7 +118,9 @@ const Card = ({
       <img
         src={wordBlitzCenter}
         alt="word blitz"
-        className="pointer-events-none absolute left-1/2 top-1/2 h-56 w-56 -translate-x-1/2 -translate-y-1/2 object-contain opacity-80 drop-shadow-xl"
+        className={`pointer-events-none absolute left-1/2 top-1/2 h-56 w-56 -translate-x-1/2 -translate-y-1/2 object-contain opacity-80 ${
+          isFrontCard ? "drop-shadow-xl" : ""
+        }`}
       />
 
       <h2 className="absolute top-1/2 right-[15%] w-48 translate-x-1/2 -translate-y-1/2 rotate-90 whitespace-nowrap text-center text-3xl font-black text-indigo-700">
