@@ -1,8 +1,26 @@
 /* note to me: this index.css is for basis style, reset, global styles. */
 @import "tailwindcss";
 
+@theme {
+  --color-primary: #6366f1;
+  --color-primary-hover: #4f46e5;
+  --color-primary-text: #ffffff;
+  --color-primary-border: #4f46e5;
+  --color-primary-background: #6366f1;
+  --color-primary-background-hover: #4f46e5;
+  --color-primary-background-text: #ffffff;
+  --color-primary-background-border: #4f46e5;
+}
 button {
-  @apply rounded-xl px-4 py-2 font-semibold shadow-sm transition;
+  @apply rounded-xl px-4 py-2 font-semibold shadow-sm transition bg-primary text-primary-text;
+}
+
+button:hover {
+  @apply bg-primary-hover text-primary-text cursor-pointer;
+}
+
+button:disabled {
+  @apply cursor-not-allowed opacity-50;
 }
 
 body {
@@ -11,4 +29,8 @@ body {
 
 #root {
   @apply min-h-screen;
+}
+
+dialog::backdrop {
+  background: rgba(0, 0, 0, 0.4);
 }

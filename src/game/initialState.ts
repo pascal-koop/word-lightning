@@ -1,11 +1,16 @@
-import { QUESTIONS } from "./questions";
+export type GamePhase =
+  | "setup"
+  | "playing"
+  | "result"
+  | "add-question"
+  | "custom-question";
 
-export const initialState: {
-  phase: string;
+export type GameState = {
+  phase: GamePhase;
   pairs: { letter: string; question: string } | null;
-  questions: string[];
-} = {
+};
+
+export const initialState: GameState = {
   phase: "setup",
   pairs: null,
-  questions: QUESTIONS,
 };

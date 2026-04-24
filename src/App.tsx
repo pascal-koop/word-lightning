@@ -2,8 +2,8 @@ import Game from "./Game";
 import wordBlitzCenter from "./assets/word_blitz_center.png";
 function App() {
   return (
-    <main className="App min-h-screen px-4 py-6 sm:px-8">
-      <header className="mx-auto mb-6 flex max-w-4xl items-center justify-between">
+    <main className="App min-h-screen px-4 py-6 sm:px-3">
+      <header className="mx-auto  flex max-w-4xl items-center justify-between">
         <div className="flex items-center gap-1">
           <div>
             <img
