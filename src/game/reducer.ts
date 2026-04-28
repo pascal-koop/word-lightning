@@ -15,6 +15,7 @@ function pushHistory(history: GamePhase[], currentPhase: GamePhase) {
 }
 
 export default function reducer(state: GameState, action: Action): GameState {
+  console.log(state.phase, state.history);
   switch (action.type) {
     case "START_GAME": {
       if (action.payload.length === 0) return state;
