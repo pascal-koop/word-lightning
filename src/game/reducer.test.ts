@@ -54,6 +54,7 @@ describe("reducer", () => {
     const playingState: GameState = {
       phase: "playing",
       pairs: { letter: "A", question: "Is blue" },
+      history: [],
     };
 
     it("moves to the result phase", () => {
@@ -73,6 +74,7 @@ describe("reducer", () => {
     const playingState: GameState = {
       phase: "playing",
       pairs: { letter: "A", question: "Is blue" },
+      history: [],
     };
 
     it("generates a new pair and keeps the phase on playing", () => {
@@ -114,7 +116,11 @@ describe("reducer", () => {
 
   describe("immutability", () => {
     it("does not mutate the incoming state object", () => {
-      const startingState: GameState = { phase: "setup", pairs: null };
+      const startingState: GameState = {
+        phase: "setup",
+        pairs: null,
+        history: [],
+      };
       const snapshot: GameState = { ...startingState };
 
       reducer(startingState, {
