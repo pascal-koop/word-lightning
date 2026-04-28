@@ -37,6 +37,7 @@ export default function Game() {
         onStart={startGame}
         onGoToAddQuestion={goToAddQuestion}
         questionsCount={activeQuestionTexts.length}
+        onGoToCustomQuestions={goToCustomQuestion}
       />
     );
   }

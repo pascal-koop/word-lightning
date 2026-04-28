@@ -1,5 +1,5 @@
 import { createPairs } from "./logic";
-import { type GameState } from "./initialState";
+import { type GamePhase, type GameState } from "./initialState";
 
 type Action =
   | { type: "START_GAME"; payload: string[] }
@@ -7,7 +7,12 @@ type Action =
   | { type: "NEXT_PAIR"; payload: string[] }
   | { type: "GO_TO_ADD_QUESTION" }
   | { type: "GO_TO_SETUP" }
-  | { type: "GO_TO_CUSTOM_QUESTION" };
+  | { type: "GO_TO_CUSTOM_QUESTION" }
+  | { type: "GO_BACK" };
+
+function pushHistory(history: GamePhase[], currentPhase: GamePhase) {
+  return [...history, currentPhase].slice(-3);
+}
 
 export default function reducer(state: GameState, action: Action): GameState {
   switch (action.type) {
@@ -29,14 +34,34 @@ export default function reducer(state: GameState, action: Action): GameState {
     }
 
     case "GO_TO_ADD_QUESTION":
-      return { ...state, phase: "add-question" };
+      return {
+        ...state,
+        phase: "add-question",
+        history: pushHistory(state.history, state.phase),
+      };
 
     case "GO_TO_CUSTOM_QUESTION":
-      return { ...state, phase: "custom-question" };
+      return {
+        ...state,
+        phase: "custom-question",
+        history: pushHistory(state.history, state.phase),
+      };
 
     case "GO_TO_SETUP":
-      return { ...state, phase: "setup" };
-
+      return {
+        ...state,
+        phase: "setup",
+        history: pushHistory(state.history, state.phase),
+      };
+    case "GO_BACK": {
+      const previousPhase = state.history.at(-1);
+      if (!previousPhase) return state;
+      return {
+        ...state,
+        phase: previousPhase,
+        history: state.history.slice(0, -1),
+      };
+    }
     default:
       return state;
   }
