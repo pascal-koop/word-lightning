@@ -2,7 +2,24 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!--
+      viewport-fit=cover: nötig damit die App das ganze Display nutzt
+        (inkl. Bereich um den Notch). Ohne das bleibt iOS schwarz.
+      user-scalable=no, maximum-scale=1: verhindert ungewolltes Zoomen
+        per Doppeltipp – fühlt sich in einem Spiel native an.
+    -->
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"
+    />
+
+    <!-- iOS-spezifische Web-App-Tags. Wirken sowohl in Capacitor als
+         auch wenn man die Web-Version per "Zum Home-Bildschirm"
+         als PWA installiert. -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="Word Lightning" />
+    <meta name="format-detection" content="telephone=no" />
 
     <!-- Primary SEO -->
     <title>Word Lightning – fast word-association game</title>

@@ -1,5 +1,6 @@
 import { motion, useMotionValue, useTransform } from "motion/react";
 import { useEffect, useState, type Dispatch, type SetStateAction } from "react";
+import { Haptics, ImpactStyle } from "@capacitor/haptics";
 import wordBlitzCenter from "../assets/word_blitz_center.png";
 
 const VISIBLE_CARDS = 3;
@@ -67,7 +68,14 @@ const Card = ({
   });
   const handleDragEnd = () => {
     if (Math.abs(x.get()) > 50) {
-      // get rid of current card
+      // Native "Tack"-Vibration auslösen. Im Browser ist das ein No-Op,
+      // auf iOS gibt es ein dezentes haptisches Signal über die Taptic Engine.
+      // Wir fangen Fehler bewusst still ab, damit eine eventuelle
+      // Plugin-Initialisierungs-Race-Condition das Spiel nicht stört.
+      Haptics.impact({ style: ImpactStyle.Light }).catch(() => {
+        /* haptics nicht verfügbar – ignorieren */
+      });
+
       setCards((prevValue: Card[]) =>
         prevValue.filter((card) => card.id !== id),
       );
