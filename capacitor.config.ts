@@ -3,11 +3,11 @@ import type { CapacitorConfig } from "@capacitor/cli";
 const config: CapacitorConfig = {
   // appId: die eindeutige Bundle ID im App Store. Lässt sich nach
   // dem ersten Release praktisch nicht mehr ändern.
-  appId: "com.koop.wordlightning",
+  appId: "com.koop.wordblitz",
 
   // appName: der Anzeigename auf dem Home-Screen (max. ~12 Zeichen sind
   // sichtbar, bevor iOS abkürzt).
-  appName: "Word Lightning",
+  appName: "Word Blitz",
 
   // webDir: Ordner mit dem fertigen Web-Build, den Capacitor in die
   // native App kopiert. Vite gibt standardmäßig nach "dist" aus.

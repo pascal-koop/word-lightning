@@ -1,4 +1,4 @@
-# Word Lightning
+# Word Blitz
 
 A fast, playful word-association game built with **React 19**, **TypeScript** and **Vite**.
 The player is shown a random letter together with a random question (for example
@@ -7,10 +7,10 @@ that letter. Cards can be swiped away to get the next pair, and players can mana
 their own collection of questions on top of the built-in ones, maybe spicy ones for a more adult experience. 
 
 ---
-# [Word-lightning](https://word-blitz-two.vercel.app/) Play it!
+# [Word Blitz](https://word-blitz-two.vercel.app/) Play it!
 ## 1. What the app does (non-technical summary)
 
-Word Lightning is a small, mobile-first browser game that runs entirely on the
+Word Blitz is a small, mobile-first browser game that runs entirely on the
 client – no backend, no login, no tracking. From a user perspective the app
 provides four things:
 
