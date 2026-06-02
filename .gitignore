@@ -32,3 +32,6 @@ ios/App/App/public/
 ios/.sourcemaps/
 *.xcuserstate
 xcuserdata/
+
+# Interne Notizen und Doku-Entwürfe – nicht ins Repo
+docs/
