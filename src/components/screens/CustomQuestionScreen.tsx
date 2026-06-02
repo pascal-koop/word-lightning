@@ -7,9 +7,10 @@ import {
   validateQuestionInput,
 } from "../../game/questionValidation";
 import { type QuestionSource } from "../../db/db.ts";
+import BackButton from "../BackButton.tsx";
 
 export default function CustomQuestionScreen({
-  onGoToAddQuestion,
+  onBack,
   questions,
   onDeleteQuestion,
   onEditQuestion,
@@ -17,7 +18,7 @@ export default function CustomQuestionScreen({
   questionSource,
   onChangeQuestionSource,
 }: {
-  onGoToAddQuestion: () => void;
+  onBack: () => void;
   questions: string[];
   onDeleteQuestion: (question: string) => Promise<void>;
   onEditQuestion: (oldQuestion: string, newQuestion: string) => Promise<void>;
@@ -68,7 +69,7 @@ export default function CustomQuestionScreen({
         <h2 className="text-3xl font-black text-slate-900">My Questions</h2>
         <div className="flex gap-2">
           <button onClick={handleOpenAddQuestion}>Add question</button>
-          <button onClick={onGoToAddQuestion}>Back</button>
+          <BackButton onBack={onBack} />
         </div>
       </div>
       <div className="mb-6">

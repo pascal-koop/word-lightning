@@ -25,13 +25,13 @@ export function isQuestionSource(value: string): value is QuestionSource {
   return value === "default" || value === "custom" || value === "both";
 }
 
-export class WordLightningDB extends Dexie {
+export class WordBlitzDB extends Dexie {
   defaultQuestions!: EntityTable<QuestionRecord, "id">;
   customQuestions!: EntityTable<QuestionRecord, "id">;
   settings!: EntityTable<SettingRecord, "key">;
 
   constructor() {
-    super("WordLightningDB");
+    super("WordBlitzDB");
     this.version(1).stores({
       defaultQuestions: "++id, &text",
       customQuestions: "++id, &text",
@@ -40,7 +40,7 @@ export class WordLightningDB extends Dexie {
   }
 }
 
-export const db = new WordLightningDB();
+export const db = new WordBlitzDB();
 
 export async function seedDefaultQuestions() {
   const count = await db.defaultQuestions.count();

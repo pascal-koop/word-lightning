@@ -5,6 +5,7 @@ import {
 } from "../../game/questionValidation";
 import QuestionSourceToggle from "../QuestionSourceToggle.tsx";
 import { type QuestionSource } from "../../db/db.ts";
+import BackButton from "../BackButton.tsx";
 
 type AddQuestionScreenProps = {
   onAddQuestion: (question: string) => Promise<void>;
@@ -117,12 +118,7 @@ export default function AddQuestionScreen({
           </button>
         </form>
         <div className="mt-3 flex flex-col gap-3">
-          <button
-            className="bg-white text-slate-900 ring-1 ring-slate-200 hover:bg-slate-50"
-            onClick={onBack}
-          >
-            Back
-          </button>
+          <BackButton onBack={onBack} />
         </div>
         {customQuestions.length > 0 && (
           <div className="mt-6">

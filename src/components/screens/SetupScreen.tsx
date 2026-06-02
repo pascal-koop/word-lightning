@@ -2,12 +2,14 @@ type SetupScreenProps = {
   onStart: () => void;
   onGoToAddQuestion: () => void;
   questionsCount: number;
+  onGoToCustomQuestions: () => void;
 };
 
 export default function SetupScreen({
   onStart,
   onGoToAddQuestion,
   questionsCount,
+  onGoToCustomQuestions,
 }: SetupScreenProps) {
   const isStartDisabled = questionsCount === 0;
   return (
@@ -36,17 +38,23 @@ export default function SetupScreen({
 
         <div className="flex flex-col gap-3">
           <button
+            className="bg-indigo-600 text-white hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-50"
+            onClick={onStart}
+            disabled={isStartDisabled}
+          >
+            Start game
+          </button>
+          <button
             className="bg-white text-slate-900 ring-1 ring-slate-200 hover:bg-slate-50"
             onClick={onGoToAddQuestion}
           >
             Add question
           </button>
           <button
-            className="bg-indigo-600 text-white hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-50"
-            onClick={onStart}
-            disabled={isStartDisabled}
+            className="bg-white text-slate-900 ring-1 ring-slate-200 hover:bg-slate-50"
+            onClick={onGoToCustomQuestions}
           >
-            Start game
+            go to Questions
           </button>
         </div>
       </div>

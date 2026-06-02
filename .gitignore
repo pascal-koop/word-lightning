@@ -22,3 +22,16 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Capacitor / iOS – das Projekt-Skelett bleibt in Git, Build-Output nicht.
+ios/App/build/
+ios/App/Pods/
+ios/App/Podfile.lock
+ios/DerivedData/
+ios/App/App/public/
+ios/.sourcemaps/
+*.xcuserstate
+xcuserdata/
+
+# Interne Notizen und Doku-Entwürfe – nicht ins Repo
+docs/

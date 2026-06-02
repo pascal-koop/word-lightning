@@ -106,6 +106,7 @@ export function useGame() {
     goToAddQuestion: () => dispatch({ type: "GO_TO_ADD_QUESTION" }),
     goToSetup: () => dispatch({ type: "GO_TO_SETUP" }),
     goToCustomQuestion: () => dispatch({ type: "GO_TO_CUSTOM_QUESTION" }),
+    goBack: () => dispatch({ type: "GO_BACK" }),
     addQuestion: addCustomQuestion,
     deleteQuestion: deleteCustomQuestion,
     editQuestion: editCustomQuestion,

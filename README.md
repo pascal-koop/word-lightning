@@ -1,4 +1,4 @@
-# Word Lightning
+# Word Blitz
 
 A fast, playful word-association game built with **React 19**, **TypeScript** and **Vite**.
 The player is shown a random letter together with a random question (for example
@@ -7,10 +7,10 @@ that letter. Cards can be swiped away to get the next pair, and players can mana
 their own collection of questions on top of the built-in ones, maybe spicy ones for a more adult experience. 
 
 ---
-# [Word-lightning](https://word-blitz-two.vercel.app/) Play it!
+# [Word Blitz](https://word-blitz-two.vercel.app/) Play it!
 ## 1. What the app does (non-technical summary)
 
-Word Lightning is a small, mobile-first browser game that runs entirely on the
+Word Blitz is a small, mobile-first browser game that runs entirely on the
 client – no backend, no login, no tracking. From a user perspective the app
 provides four things:
 
@@ -33,16 +33,17 @@ after the first load and there is no account setup.
 
 ## 2. Technology stack
 
-| Area             | Choice                                                       |
-| ---------------- | ------------------------------------------------------------ |
-| UI framework     | React 19 (function components + hooks)                       |
-| Language         | TypeScript 5.9 (strict mode)                                 |
-| Build tool       | Vite 7                                                       |
-| Styling          | Tailwind CSS v4 (via `@tailwindcss/vite`)                    |
-| Animation        | `motion` (the successor of Framer Motion) for swipe gestures |
-| Client-side DB   | IndexedDB via `dexie` + `dexie-react-hooks` (live queries)   |
-| Input validation | `zod` schemas for question text                              |
-| Linting          | ESLint 9 with `typescript-eslint` and React Hooks plugins    |
+| Area             | Choice                                                            |
+| ---------------- | ----------------------------------------------------------------- |
+| UI framework     | React 19 (function components + hooks)                            |
+| Language         | TypeScript 5.9 (strict mode)                                      |
+| Build tool       | Vite 7                                                            |
+| Styling          | Tailwind CSS v4 (via `@tailwindcss/vite`)                         |
+| Animation        | `motion` (the successor of Framer Motion) for swipe gestures      |
+| Client-side DB   | IndexedDB via `dexie` + `dexie-react-hooks` (live queries)        |
+| Input validation | `zod` schemas for question text                                   |
+| Mobile shell     | Capacitor 8 (iOS + Android) with haptics, splash and status plugins |
+| Linting          | ESLint 9 with `typescript-eslint` and React Hooks plugins         |
 
 ---
 
@@ -270,14 +271,35 @@ The dev server will start on the port printed by Vite (usually
 
 ### Available scripts
 
-| Script             | What it does                                           |
-| ------------------ | ------------------------------------------------------ |
-| `npm run dev`      | Start the Vite dev server with HMR                     |
-| `npm run build`    | Type-check with `tsc -b` and create a production build |
-| `npm run preview`  | Serve the production build locally for a smoke test    |
-| `npm run lint`     | Run ESLint across the whole project                    |
-| `npm run test`     | Start Vitest in watch mode for local development       |
-| `npm run test:run` | Run the full Vitest suite once (for CI / pre-commit)   |
+| Script                    | What it does                                                                  |
+| ------------------------- | ----------------------------------------------------------------------------- |
+| `npm run dev`             | Start the Vite dev server with HMR                                            |
+| `npm run build`           | Type-check with `tsc -b` and create a production build                        |
+| `npm run preview`         | Serve the production build locally for a smoke test                           |
+| `npm run lint`            | Run ESLint across the whole project                                           |
+| `npm run test`            | Start Vitest in watch mode for local development                              |
+| `npm run test:run`        | Run the full Vitest suite once (for CI / pre-commit)                          |
+| `npm run ios:sync`        | Build the web app and sync it into the native iOS project                     |
+| `npm run ios:open`        | Same as `ios:sync` and then open the project in Xcode                         |
+| `npm run android:sync`    | Build the web app and sync it into the native Android project                 |
+| `npm run android:open`    | Same as `android:sync` and then open the project in Android Studio            |
+| `npm run assets:generate` | Generate iOS and Android icons + splash assets from a single 1024×1024 master |
+
+### Mobile builds (iOS + Android)
+
+The app is wrapped with [Capacitor](https://capacitorjs.com) so the same
+React codebase is shipped to both the Apple App Store and the Google Play
+Store. The native projects live in the `ios/` and `android/` folders and
+are committed to the repo – Capacitor only **copies the built web assets**
+into them during `*:sync`.
+
+Two German step-by-step guides explain the full release process:
+
+- iOS / App Store: [`docs/APP_STORE_GUIDE.md`](docs/APP_STORE_GUIDE.md)
+- Android / Play Store: [`docs/PLAY_STORE_GUIDE.md`](docs/PLAY_STORE_GUIDE.md)
+
+A consolidated to-do list (what only you can do vs. what the agent can
+automate) lives in [`docs/TODO.md`](docs/TODO.md).
 
 ### Testing
 

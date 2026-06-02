@@ -23,6 +23,7 @@ export default function Game() {
     deleteQuestion,
     editQuestion,
     setQuestionSource,
+    goBack,
   } = useGame();
 
   if (isLoading) {
@@ -37,6 +38,7 @@ export default function Game() {
         onStart={startGame}
         onGoToAddQuestion={goToAddQuestion}
         questionsCount={activeQuestionTexts.length}
+        onGoToCustomQuestions={goToCustomQuestion}
       />
     );
   }
@@ -45,7 +47,7 @@ export default function Game() {
     return (
       <AddQuestionScreen
         onAddQuestion={addQuestion}
-        onBack={goToSetup}
+        onBack={goBack}
         onGoToCustomQuestion={goToCustomQuestion}
         questionsCount={activeQuestionTexts.length}
         customQuestions={customQuestionTexts}
@@ -59,7 +61,7 @@ export default function Game() {
   if (state.phase === "custom-question") {
     return (
       <CustomQuestionScreen
-        onGoToAddQuestion={goToAddQuestion}
+        onBack={goBack}
         questions={customQuestionTexts}
         onDeleteQuestion={deleteQuestion}
         onEditQuestion={editQuestion}
