@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Word Blitz</string>
+    <string name="title_activity_main">Word Blitz</string>
+    <string name="package_name">com.koop.wordblitz</string>
+    <string name="custom_url_scheme">com.koop.wordblitz</string>
+</resources>

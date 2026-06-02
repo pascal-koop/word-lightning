@@ -20,6 +20,13 @@ const config: CapacitorConfig = {
     contentInset: "always",
   },
 
+  android: {
+    // backgroundColor: Hintergrundfarbe der nativen Activity (sichtbar,
+    // bevor die WebView geladen ist und beim Wechsel von/zum App-Switcher).
+    // Gleicher Indigo-Lavendel wie iOS, damit kein weißer Blitz entsteht.
+    backgroundColor: "#eef2ff",
+  },
+
   plugins: {
     SplashScreen: {
       // 2 Sekunden Splash, dann automatisch ausblenden. Lange Splashes
