@@ -2,7 +2,6 @@ import { useGame } from "./hooks/useGame.ts";
 import SetupScreen from "./components/screens/SetupScreen.tsx";
 import PlayScreen from "./components/screens/PlayScreen.tsx";
 import ResultScreen from "./components/screens/ResultScreen.tsx";
-import AddQuestionScreen from "./components/screens/AddQuestionScreen.tsx";
 import CustomQuestionScreen from "./components/screens/CustomQuestionScreen.tsx";
 import LoadingScreen from "./components/LoadingScreen.tsx";
 
@@ -18,7 +17,6 @@ export default function Game() {
     endGame,
     nextPair,
     addQuestion,
-    goToAddQuestion,
     goToCustomQuestion,
     goToSetup,
     deleteQuestion,
@@ -42,27 +40,15 @@ export default function Game() {
     return (
       <SetupScreen
         onStart={startGame}
-        onGoToAddQuestion={goToAddQuestion}
-        questionsCount={activeQuestionTexts.length}
         onGoToCustomQuestions={goToCustomQuestion}
+        defaultQuestions={defaultQuestionTexts}
+        customQuestions={customQuestionTexts}
+        questionSource={questionSource}
+        onChangeQuestionSource={setQuestionSource}
+        onAddQuestion={addQuestion}
         players={state.players}
         onAddPlayer={addPlayer}
         onRemovePlayer={removePlayer}
-      />
-    );
-  }
-
-  if (state.phase === "add-question") {
-    return (
-      <AddQuestionScreen
-        onAddQuestion={addQuestion}
-        onBack={goBack}
-        onGoToCustomQuestion={goToCustomQuestion}
-        questionsCount={activeQuestionTexts.length}
-        customQuestions={customQuestionTexts}
-        existingQuestions={customQuestionTexts}
-        questionSource={questionSource}
-        onChangeQuestionSource={setQuestionSource}
       />
     );
   }

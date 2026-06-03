@@ -1,13 +1,10 @@
-import { useState, type FormEvent } from "react";
+import { useState } from "react";
 import QuestionListItem from "../QuestionListItem.tsx";
 import AddQuestionDialog from "../dialogs/AddQuestionDialog.tsx";
 import QuestionSourceToggle from "../QuestionSourceToggle.tsx";
-import {
-  isDuplicateQuestion,
-  validateQuestionInput,
-} from "../../game/questionValidation";
 import { type QuestionSource } from "../../db/db.ts";
 import { buildVisibleQuestions } from "../../game/questionList.ts";
+import { useAddQuestionForm } from "../../hooks/useAddQuestionForm.ts";
 import BackButton from "../BackButton.tsx";
 
 type CustomQuestionScreenProps = {
@@ -35,10 +32,7 @@ export default function CustomQuestionScreen({
   questionSource,
   onChangeQuestionSource,
 }: CustomQuestionScreenProps) {
-  const [newQuestion, setNewQuestion] = useState("");
-  const [isInputTouched, setIsInputTouched] = useState(false);
   const [isAddQuestionOpen, setIsAddQuestionOpen] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const visibleQuestions = buildVisibleQuestions(
     questionSource,
@@ -52,38 +46,17 @@ export default function CustomQuestionScreen({
   // but would still confuse players.
   const allQuestionTexts = [...defaultQuestions, ...customQuestions];
 
-  const validation = validateQuestionInput(newQuestion);
-  const isDuplicate = validation.success
-    ? isDuplicateQuestion(validation.data, allQuestionTexts)
-    : false;
-  const validationError = !validation.success
-    ? validation.error.issues[0]?.message
-    : isDuplicate
-      ? "Question already exists."
-      : null;
-  const shouldShowValidationError = isInputTouched && Boolean(validationError);
-  const isAddDisabled = !validation.success || isDuplicate || isSubmitting;
+  // Shared with the quick-add modal on the setup screen so the form
+  // behaviour stays identical no matter where the user adds from.
+  const addForm = useAddQuestionForm({
+    existingQuestions: allQuestionTexts,
+    onAddQuestion,
+    onSuccess: () => setIsAddQuestionOpen(false),
+  });
 
-  const handleAdd = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    if (isAddDisabled) return;
-    setIsSubmitting(true);
-    try {
-      await onAddQuestion(newQuestion);
-      setNewQuestion("");
-      setIsInputTouched(false);
-      setIsAddQuestionOpen(false);
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
   const handleCloseAddQuestion = () => {
-    setIsInputTouched(false);
     setIsAddQuestionOpen(false);
-  };
-  const handleOpenAddQuestion = () => {
-    setIsInputTouched(false);
-    setIsAddQuestionOpen(true);
+    addForm.reset();
   };
 
   // Empty-state copy depends on which source the user has selected,
@@ -106,7 +79,7 @@ export default function CustomQuestionScreen({
       <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <h2 className="text-3xl font-black text-slate-900">My Questions</h2>
         <div className="flex gap-2">
-          <button onClick={handleOpenAddQuestion}>Add question</button>
+          <button onClick={() => setIsAddQuestionOpen(true)}>Add question</button>
           <BackButton onBack={onBack} />
         </div>
       </div>
@@ -139,18 +112,13 @@ export default function CustomQuestionScreen({
       )}
       <AddQuestionDialog
         isOpen={isAddQuestionOpen}
-        newQuestion={newQuestion}
-        shouldShowValidationError={shouldShowValidationError}
-        validationError={validationError}
-        isAddDisabled={isAddDisabled}
-        isSubmitting={isSubmitting}
-        onQuestionChange={(value) => {
-          if (!isInputTouched) {
-            setIsInputTouched(true);
-          }
-          setNewQuestion(value);
-        }}
-        onSubmit={handleAdd}
+        newQuestion={addForm.value}
+        shouldShowValidationError={addForm.shouldShowValidationError}
+        validationError={addForm.validationError}
+        isAddDisabled={addForm.isDisabled}
+        isSubmitting={addForm.isSubmitting}
+        onQuestionChange={addForm.handleChange}
+        onSubmit={addForm.handleSubmit}
         onClose={handleCloseAddQuestion}
       />
     </div>
