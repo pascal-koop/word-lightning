@@ -10,11 +10,16 @@ const SwipeCards = ({
   letter,
   question,
   questionsCount,
+  isLocked = false,
 }: {
   onSwipe: () => void;
   letter: string;
   question: string;
   questionsCount: number;
+  // When true, the cards cannot be dragged. We use this to pause the
+  // game while the user picks who scored the point on the previous
+  // card – otherwise a fast swiper could skip the score prompt.
+  isLocked?: boolean;
 }) => {
   const [cards, setCards] = useState<Card[]>(createCardData(questionsCount));
 
@@ -36,6 +41,7 @@ const SwipeCards = ({
             onSwipe={onSwipe}
             letter={letter}
             question={question}
+            isLocked={isLocked}
           />
         );
       })}
@@ -49,6 +55,7 @@ const Card = ({
   onSwipe,
   letter,
   question,
+  isLocked,
 }: {
   id: number;
   setCards: Dispatch<SetStateAction<Card[]>>;
@@ -56,6 +63,7 @@ const Card = ({
   onSwipe: () => void;
   letter: string;
   question: string;
+  isLocked: boolean;
 }) => {
   const x = useMotionValue(0);
 
@@ -67,6 +75,11 @@ const Card = ({
     return `${rotateRaw.get() + offSet}deg`;
   });
   const handleDragEnd = () => {
+    // Defensive guard: even though `drag={false}` already prevents
+    // dragging while locked, we double-check here so a flaky touch
+    // event cannot trigger the swipe handler while the score prompt
+    // is open.
+    if (isLocked) return;
     if (Math.abs(x.get()) > 50) {
       // Native "Tack"-Vibration auslösen. Im Browser ist das ein No-Op,
       // auf iOS gibt es ein dezentes haptisches Signal über die Taptic Engine.
@@ -84,7 +97,11 @@ const Card = ({
   };
   return (
     <motion.div
-      className="relative inline-block h-96 w-72 origin-bottom transform-gpu overflow-hidden rounded-3xl border border-white/70 bg-white/80 antialiased hover:cursor-grab active:cursor-grabbing"
+      className={`relative inline-block h-96 w-72 origin-bottom transform-gpu overflow-hidden rounded-3xl border border-white/70 bg-white/80 antialiased ${
+        isLocked
+          ? "cursor-not-allowed"
+          : "hover:cursor-grab active:cursor-grabbing"
+      }`}
       style={{
         gridRow: 1,
         gridColumn: 1,
@@ -99,7 +116,10 @@ const Card = ({
       animate={{
         scale: isFrontCard ? 1.02 : 0.98,
       }}
-      drag="x"
+      // Passing `false` to `drag` disables dragging entirely, so the
+      // user gets immediate feedback that the card can't move while
+      // the score prompt is open.
+      drag={isLocked ? false : "x"}
       dragConstraints={{ left: 0, right: 0 }}
       onDragEnd={handleDragEnd}
     >

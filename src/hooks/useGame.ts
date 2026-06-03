@@ -107,6 +107,13 @@ export function useGame() {
     goToSetup: () => dispatch({ type: "GO_TO_SETUP" }),
     goToCustomQuestion: () => dispatch({ type: "GO_TO_CUSTOM_QUESTION" }),
     goBack: () => dispatch({ type: "GO_BACK" }),
+    addPlayer: (name: string) =>
+      dispatch({ type: "ADD_PLAYER", payload: name }),
+    removePlayer: (id: string) =>
+      dispatch({ type: "REMOVE_PLAYER", payload: id }),
+    onSwipe: () => dispatch({ type: "SWIPE_AWAITING_SCORE" }),
+    awardPoint: (playerId: string) =>
+      dispatch({ type: "AWARD_POINT", payload: playerId }),
     addQuestion: addCustomQuestion,
     deleteQuestion: deleteCustomQuestion,
     editQuestion: editCustomQuestion,
