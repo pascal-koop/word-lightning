@@ -10,6 +10,7 @@ export default function Game() {
   const {
     state,
     isLoading,
+    defaultQuestions,
     customQuestions,
     questionSource,
     activeQuestionTexts,
@@ -35,6 +36,7 @@ export default function Game() {
   }
 
   const customQuestionTexts = customQuestions.map((q) => q.text);
+  const defaultQuestionTexts = defaultQuestions.map((q) => q.text);
 
   if (state.phase === "setup") {
     return (
@@ -69,7 +71,8 @@ export default function Game() {
     return (
       <CustomQuestionScreen
         onBack={goBack}
-        questions={customQuestionTexts}
+        defaultQuestions={defaultQuestionTexts}
+        customQuestions={customQuestionTexts}
         onDeleteQuestion={deleteQuestion}
         onEditQuestion={editQuestion}
         onAddQuestion={addQuestion}
