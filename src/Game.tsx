@@ -24,6 +24,10 @@ export default function Game() {
     editQuestion,
     setQuestionSource,
     goBack,
+    addPlayer,
+    removePlayer,
+    onSwipe,
+    awardPoint,
   } = useGame();
 
   if (isLoading) {
@@ -39,6 +43,9 @@ export default function Game() {
         onGoToAddQuestion={goToAddQuestion}
         questionsCount={activeQuestionTexts.length}
         onGoToCustomQuestions={goToCustomQuestion}
+        players={state.players}
+        onAddPlayer={addPlayer}
+        onRemovePlayer={removePlayer}
       />
     );
   }
@@ -77,11 +84,15 @@ export default function Game() {
       <PlayScreen
         pair={state.pairs}
         questionsCount={activeQuestionTexts.length}
+        players={state.players}
+        pendingScore={state.pendingScore}
         onEnd={endGame}
-        onNext={nextPair}
+        onSwipe={onSwipe}
+        onAwardPoint={awardPoint}
+        onNextPair={nextPair}
       />
     );
   }
 
-  return <ResultScreen onRestart={goToSetup} />;
+  return <ResultScreen players={state.players} onRestart={goToSetup} />;
 }
