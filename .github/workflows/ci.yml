@@ -1,0 +1,92 @@
+# GitHub Actions workflow that runs on every push and pull request
+# targeting the long-lived branches `main` and `develop`.
+#
+# What this workflow does:
+#   1. Installs dependencies in a clean Linux runner.
+#   2. Runs the linter so style/quality issues fail the build early.
+#   3. Builds the project so type errors fail the build.
+#   4. Runs the Vitest test suite with V8 coverage.
+#   5. Enforces a 70% coverage threshold (configured in vite.config.ts).
+#   6. On pull requests, posts a coverage report as a PR comment so
+#      reviewers see the numbers right next to the diff before merging
+#      into `develop` or `main`.
+
+name: CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+# Cancel an older in-progress run when a new commit is pushed to the same
+# pull request or branch — saves Actions minutes and gives faster feedback.
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: Lint, build and test (with 70% coverage gate)
+    runs-on: ubuntu-latest
+
+    permissions:
+      # Needed by the coverage-report action so it can post / update
+      # the coverage comment on pull requests.
+      pull-requests: write
+      # Default read-only access to the checkout.
+      contents: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          # Reuses the npm cache between runs => much faster CI.
+          cache: "npm"
+
+      - name: Install dependencies
+        # `npm ci` is the CI-friendly install: it requires a lockfile,
+        # ignores `package.json` version ranges and never mutates the
+        # lockfile, so the build is fully reproducible.
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Type-check and build
+        # `npm run build` runs `tsc -b` first, so this step also fails
+        # the pipeline on TypeScript errors.
+        run: npm run build
+
+      - name: Run unit tests with coverage
+        # The 70% threshold is configured inside `vite.config.ts`
+        # (see the `test.coverage.thresholds` block). If any threshold
+        # is not met, Vitest exits with a non-zero status and fails CI.
+        run: npm run test:coverage
+
+      - name: Report coverage on pull requests
+        # Run on PRs (and only when the previous step actually produced
+        # the coverage files). `if: always()` makes sure we still post
+        # the report when tests fail — that's exactly when reviewers
+        # need to see "what slipped under 70%".
+        if: ${{ always() && github.event_name == 'pull_request' }}
+        uses: davelosert/vitest-coverage-report-action@v2
+        with:
+          # Defaults match our `vite.config.ts` output, but we set them
+          # explicitly so this file documents the contract clearly.
+          json-summary-path: ./coverage/coverage-summary.json
+          json-final-path: ./coverage/coverage-final.json
+
+      - name: Upload coverage artefacts
+        # Useful for inspecting the full report after the run, even when
+        # the workflow is triggered by a push (no PR comment).
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: coverage
+          if-no-files-found: ignore
