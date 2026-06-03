@@ -131,13 +131,11 @@ export default function SetupScreen({
               {activeCount} active
             </span>
           </div>
-          <p className="mt-1 text-xs text-slate-500">
-            Choose which prompts to play with.
-          </p>
 
           <div className="mt-3">
             <QuestionSourceToggle
               questionSource={questionSource}
+              withBorder={false}
               onChange={onChangeQuestionSource}
             />
           </div>
@@ -181,10 +179,7 @@ export default function SetupScreen({
           ▶ Start game
         </button>
         {startHint && (
-          <p
-            role="status"
-            className="mt-2 text-center text-xs text-slate-500"
-          >
+          <p role="status" className="mt-2 text-center text-xs text-slate-500">
             {startHint}
           </p>
         )}

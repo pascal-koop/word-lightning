@@ -3,6 +3,7 @@ import { type QuestionSource } from "../db/db.ts";
 type QuestionSourceToggleProps = {
   questionSource: QuestionSource;
   onChange: (value: QuestionSource) => void;
+  withBorder?: boolean;
 };
 
 type Option = {
@@ -19,9 +20,11 @@ const OPTIONS: Option[] = [
 export default function QuestionSourceToggle({
   questionSource,
   onChange,
+  withBorder = true,
 }: QuestionSourceToggleProps) {
+  const borderClass = withBorder ? "border border-indigo-100" : "";
   return (
-    <div className="rounded-2xl border border-indigo-100 bg-white px-4 py-3">
+    <div className={`rounded-2xl ${borderClass} bg-white px-4 py-3`}>
       <p className="text-sm font-semibold text-slate-700">Question source</p>
       <p className="mt-1 text-xs text-slate-500">
         Choose which prompts to play with.
