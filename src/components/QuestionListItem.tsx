@@ -8,11 +8,20 @@ import DeleteQuestionDialog from "./dialogs/DeleteQuestionDialog.tsx";
 export default function QuestionListItem({
   question,
   questions,
+  // Default questions live in a separate Dexie table and the
+  // `addCustomQuestion` / `deleteCustomQuestion` / `editCustomQuestion`
+  // mutations don't touch them. So when `isCustom` is false we hide
+  // the action buttons entirely – clicking them would otherwise look
+  // broken (no error, but nothing changes either). The default value
+  // of `true` preserves the existing behaviour for any caller that
+  // hasn't been updated yet.
+  isCustom = true,
   onEditQuestion,
   onDeleteQuestion,
 }: {
   question: string;
   questions: string[];
+  isCustom?: boolean;
   onEditQuestion: (oldQuestion: string, newQuestion: string) => Promise<void>;
   onDeleteQuestion: (question: string) => Promise<void>;
 }) {
@@ -102,30 +111,40 @@ export default function QuestionListItem({
   return (
     <>
       <li className="flex flex-col gap-3 rounded-2xl bg-[#6365f117] px-4 py-3 md:flex-row md:items-center">
-        <p className="w-full text-slate-900 wrap-break-word md:min-w-0 md:flex-1">
-          {question}
+        <p className="flex w-full items-center gap-2 text-slate-900 wrap-break-word md:min-w-0 md:flex-1">
+          <span className="min-w-0 break-words">{question}</span>
+          {!isCustom && (
+            <span
+              aria-label="Default question (read-only)"
+              className="inline-block shrink-0 rounded-full bg-slate-200 px-2 py-0.5 text-xs font-semibold text-slate-700"
+            >
+              Default
+            </span>
+          )}
         </p>
-        <div className="flex w-full gap-2 md:ml-auto md:w-auto md:shrink-0">
-          <button
-            className="text-sm disabled:cursor-not-allowed disabled:opacity-50"
-            onClick={() => {
-              setEditValue(question);
-              setIsInputTouched(false);
-              setIsEditing(true);
-            }}
-            disabled={isDeleting}
-          >
-            Edit
-          </button>
-          <button
-            className="text-sm disabled:cursor-not-allowed disabled:opacity-50"
-            onClick={() => setIsDeleteDialogOpen(true)}
-            disabled={isDeleting}
-            aria-busy={isDeleting}
-          >
-            {isDeleting ? "Deleting…" : "Delete"}
-          </button>
-        </div>
+        {isCustom && (
+          <div className="flex w-full gap-2 md:ml-auto md:w-auto md:shrink-0">
+            <button
+              className="text-sm disabled:cursor-not-allowed disabled:opacity-50"
+              onClick={() => {
+                setEditValue(question);
+                setIsInputTouched(false);
+                setIsEditing(true);
+              }}
+              disabled={isDeleting}
+            >
+              Edit
+            </button>
+            <button
+              className="text-sm disabled:cursor-not-allowed disabled:opacity-50"
+              onClick={() => setIsDeleteDialogOpen(true)}
+              disabled={isDeleting}
+              aria-busy={isDeleting}
+            >
+              {isDeleting ? "Deleting…" : "Delete"}
+            </button>
+          </div>
+        )}
       </li>
       <DeleteQuestionDialog
         isOpen={isDeleteDialogOpen}
