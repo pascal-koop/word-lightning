@@ -103,7 +103,6 @@ export function useGame() {
     endGame: () => dispatch({ type: "END_GAME" }),
     nextPair: () =>
       dispatch({ type: "NEXT_PAIR", payload: activeQuestionTexts }),
-    goToAddQuestion: () => dispatch({ type: "GO_TO_ADD_QUESTION" }),
     goToSetup: () => dispatch({ type: "GO_TO_SETUP" }),
     goToCustomQuestion: () => dispatch({ type: "GO_TO_CUSTOM_QUESTION" }),
     goBack: () => dispatch({ type: "GO_BACK" }),

@@ -2,7 +2,10 @@ export type GamePhase =
   | "setup"
   | "playing"
   | "result"
-  | "add-question"
+  // "custom-question" is reached via the "Manage questions" button on
+  // the setup screen. The old "add-question" full-screen phase was
+  // removed in favour of an inline modal that opens on top of the
+  // setup screen.
   | "custom-question";
 
 export type Player = {

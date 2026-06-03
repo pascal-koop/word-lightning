@@ -159,7 +159,6 @@ describe("reducer", () => {
 
   describe("navigation actions", () => {
     it.each([
-      ["GO_TO_ADD_QUESTION", "add-question"],
       ["GO_TO_CUSTOM_QUESTION", "custom-question"],
       ["GO_TO_SETUP", "setup"],
     ] as const)("%s sets the phase to %s", (actionType, expectedPhase) => {
@@ -169,7 +168,9 @@ describe("reducer", () => {
     });
 
     it("pushes the previous phase onto the history when navigating", () => {
-      const nextState = reducer(initialState, { type: "GO_TO_ADD_QUESTION" });
+      // Coming from "setup" and going to "custom-question" must record
+      // "setup" in the history so a subsequent GO_BACK can return there.
+      const nextState = reducer(initialState, { type: "GO_TO_CUSTOM_QUESTION" });
 
       expect(nextState.history).toEqual(["setup"]);
     });
@@ -177,19 +178,23 @@ describe("reducer", () => {
 
   describe("GO_BACK", () => {
     it("restores the previous phase from history and pops it off", () => {
-      const stateOnAddQuestion: GameState = {
+      // The state acts as if the user navigated setup -> custom-question.
+      const stateOnCustomQuestion: GameState = {
         ...initialState,
-        phase: "add-question",
+        phase: "custom-question",
         history: ["setup"],
       };
 
-      const nextState = reducer(stateOnAddQuestion, { type: "GO_BACK" });
+      const nextState = reducer(stateOnCustomQuestion, { type: "GO_BACK" });
 
       expect(nextState.phase).toBe("setup");
       expect(nextState.history).toEqual([]);
     });
 
     it("returns the same state reference when history is empty (nothing to go back to)", () => {
+      // Guard rail: the reducer must not crash when called with an empty
+      // history. Returning the same reference also lets React's
+      // bail-out skip a re-render.
       const nextState = reducer(initialState, { type: "GO_BACK" });
 
       expect(nextState).toBe(initialState);

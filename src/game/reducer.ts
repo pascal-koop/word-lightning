@@ -10,7 +10,6 @@ type Action =
   | { type: "START_GAME"; payload: string[] }
   | { type: "END_GAME" }
   | { type: "NEXT_PAIR"; payload: string[] }
-  | { type: "GO_TO_ADD_QUESTION" }
   | { type: "GO_TO_SETUP" }
   | { type: "GO_TO_CUSTOM_QUESTION" }
   | { type: "GO_BACK" }
@@ -51,13 +50,6 @@ export default function reducer(state: GameState, action: Action): GameState {
       if (action.payload.length === 0) return state;
       return { ...state, pairs: createPairs(action.payload) };
     }
-
-    case "GO_TO_ADD_QUESTION":
-      return {
-        ...state,
-        phase: "add-question",
-        history: pushHistory(state.history, state.phase),
-      };
 
     case "GO_TO_CUSTOM_QUESTION":
       return {
