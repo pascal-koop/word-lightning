@@ -112,6 +112,54 @@ describe("reducer", () => {
 
       expect(nextState.phase).toBe(expectedPhase);
     });
+
+    it("pushes the previous phase onto the history when navigating", () => {
+      // Coming from "setup" and going to "add-question" must record
+      // "setup" in the history so a subsequent GO_BACK can return there.
+      const nextState = reducer(initialState, { type: "GO_TO_ADD_QUESTION" });
+
+      expect(nextState.history).toEqual(["setup"]);
+    });
+  });
+
+  describe("GO_BACK", () => {
+    it("restores the previous phase from history and pops it off", () => {
+      // The state acts as if the user navigated setup -> add-question.
+      const stateOnAddQuestion: GameState = {
+        phase: "add-question",
+        pairs: null,
+        history: ["setup"],
+      };
+
+      const nextState = reducer(stateOnAddQuestion, { type: "GO_BACK" });
+
+      expect(nextState.phase).toBe("setup");
+      expect(nextState.history).toEqual([]);
+    });
+
+    it("returns the same state reference when history is empty (nothing to go back to)", () => {
+      // Guard rail: the reducer must not crash when called with an empty
+      // history. Returning the same reference also lets React's
+      // bail-out skip a re-render.
+      const nextState = reducer(initialState, { type: "GO_BACK" });
+
+      expect(nextState).toBe(initialState);
+    });
+  });
+
+  describe("unknown actions", () => {
+    it("returns the same state reference for an unrecognised action type", () => {
+      // We cast through `unknown` because TypeScript would otherwise
+      // refuse to pass an action that isn't part of the union — which
+      // is exactly the protection we want at compile time. At runtime
+      // the reducer must still be defensive and fall through to the
+      // `default` branch, which is what this test pins down.
+      const nextState = reducer(initialState, {
+        type: "UNKNOWN_ACTION",
+      } as unknown as Parameters<typeof reducer>[1]);
+
+      expect(nextState).toBe(initialState);
+    });
   });
 
   describe("immutability", () => {

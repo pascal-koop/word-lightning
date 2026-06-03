@@ -279,6 +279,7 @@ The dev server will start on the port printed by Vite (usually
 | `npm run lint`            | Run ESLint across the whole project                                           |
 | `npm run test`            | Start Vitest in watch mode for local development                              |
 | `npm run test:run`        | Run the full Vitest suite once (for CI / pre-commit)                          |
+| `npm run test:coverage`   | Run the full suite once and produce a V8 coverage report (≥ 70% gate)         |
 | `npm run ios:sync`        | Build the web app and sync it into the native iOS project                     |
 | `npm run ios:open`        | Same as `ios:sync` and then open the project in Xcode                         |
 | `npm run android:sync`    | Build the web app and sync it into the native Android project                 |
@@ -310,12 +311,22 @@ refactoring easier because the test file moves with the implementation.
 Currently covered:
 
 - `src/game/reducer.test.ts` – every action of the game reducer, including
-  empty-payload no-ops and state immutability.
+  history tracking, the `GO_BACK` action, the unknown-action fallback and
+  state immutability.
 - `src/game/questionValidation.test.ts` – zod schema, text sanitization, the
   validation wrapper and locale-aware duplicate detection.
+- `src/game/logic.test.ts` – the random pair builder (`createPairs`),
+  including a `Math.random` spy to prove the function is the only source
+  of randomness.
 
 Vitest is configured inside `vite.config.ts` (via the `test` block) so there
 is a single source of truth for both the dev server and the test runner.
+
+The `test.coverage` block enforces a **70% threshold** on lines, statements,
+functions and branches — currently scoped to `src/game/**` because that is
+the pure-logic layer of the app (UI components and the IndexedDB layer are
+not yet covered and would require a `jsdom` setup). If coverage drops below
+70% the test run exits with a non-zero status, which fails CI.
 
 ---
 
@@ -379,8 +390,8 @@ steps for the project, roughly ordered by impact.
 
 ### Code quality and tooling
 
-- [ ] **More unit tests.** `reducer.ts` and `questionValidation.ts` are
-      covered; `logic.ts` (`createPairs`, Fisher–Yates shuffle) is not yet.
+- [x] **More unit tests.** `reducer.ts`, `questionValidation.ts` and
+      `logic.ts` (`createPairs`, Fisher–Yates shuffle) are now covered.
 - [ ] **Component tests** for `QuestionListItem` and the two dialogs
       (edit/delete happy path and validation errors) with React Testing
       Library, which also requires adding `jsdom` as the Vitest environment.
@@ -390,8 +401,10 @@ steps for the project, roughly ordered by impact.
       hook to deduplicate `AddQuestionDialog` and `DeleteQuestionDialog`.
 - [ ] **PWA support.** Add a manifest and a service worker so the app becomes
       installable and fully offline-capable.
-- [ ] **CI pipeline.** Add a GitHub Actions workflow that runs `lint`,
-      `build` and the future test suite on every pull request.
+- [x] **CI pipeline.** A GitHub Actions workflow under
+      `.github/workflows/ci.yml` runs `lint`, `build` and `test:coverage`
+      on every push and pull request to `main` and `develop`, enforces a
+      70% coverage threshold and posts a coverage comment on PRs.
 
 ### Accessibility
 
@@ -404,6 +417,31 @@ steps for the project, roughly ordered by impact.
 
 ---
 
-## 8. License
+## 8. Branching and CI workflow
+
+The project follows a **Git Flow**-style branching model:
+
+- **`main`** – stable, release-ready code. Only updated via pull requests
+  from `develop` (or short-lived hotfix branches).
+- **`develop`** – integration branch. New features get merged into
+  `develop` first; `develop` is then merged into `main` for a release.
+- **`feature/*`** – short-lived branches created from `develop`, opened
+  back into `develop` via a pull request.
+
+Every push and pull request that targets `main` or `develop` runs the
+GitHub Actions workflow `.github/workflows/ci.yml`, which:
+
+1. Installs dependencies with `npm ci`.
+2. Runs `npm run lint`.
+3. Runs `npm run build` (which also type-checks via `tsc -b`).
+4. Runs `npm run test:coverage` and **fails the build** if the coverage
+   drops below the 70% threshold defined in `vite.config.ts`.
+5. On pull requests, posts a coverage report comment so reviewers see
+   the current numbers before merging into `develop` or `main`.
+6. Always uploads the full coverage report as a workflow artefact.
+
+---
+
+## 9. License
 
 MIT License - see the [LICENSE](LICENSE) file for details.

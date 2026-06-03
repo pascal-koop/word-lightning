@@ -23,6 +23,9 @@ dist-ssr
 *.sln
 *.sw?
 
+# Test coverage output (regenerated locally and in CI)
+coverage
+
 # Capacitor / iOS – das Projekt-Skelett bleibt in Git, Build-Output nicht.
 ios/App/build/
 ios/App/Pods/
