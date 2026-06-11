@@ -9,10 +9,6 @@ import BackButton from "../BackButton.tsx";
 
 type CustomQuestionScreenProps = {
   onBack: () => void;
-  // We accept the two source tables separately so the screen can
-  // decide which rows are read-only (defaults) and which are editable
-  // (customs). Doing the merge here – instead of asking the caller to
-  // pre-merge – keeps the read/write logic in one place.
   defaultQuestions: string[];
   customQuestions: string[];
   onDeleteQuestion: (question: string) => Promise<void>;
