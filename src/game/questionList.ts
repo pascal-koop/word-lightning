@@ -28,9 +28,6 @@ export function buildVisibleQuestions(
     case "custom":
       return customs;
     case "both":
-      // Defaults first so the screen has a stable, predictable order:
-      // the immutable "library" sits at the top, the user's own
-      // additions follow below.
-      return [...defaults, ...customs];
+      return [...customs, ...defaults];
   }
 }

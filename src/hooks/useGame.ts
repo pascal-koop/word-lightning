@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useReducer } from "react";
+import { useCallback, useMemo, useReducer, useState } from "react";
 import { useLiveQuery } from "dexie-react-hooks";
 import reducer from "../game/reducer.ts";
 import { initialState } from "../game/initialState.ts";
@@ -91,6 +91,9 @@ export function useGame() {
     });
   }, []);
 
+  const [manageQuestionSource, setManageQuestionSource] =
+    useState<QuestionSource>("both");
+
   return {
     state,
     isLoading,
@@ -117,5 +120,7 @@ export function useGame() {
     deleteQuestion: deleteCustomQuestion,
     editQuestion: editCustomQuestion,
     setQuestionSource,
+    manageQuestionSource,
+    setManageQuestionSource,
   };
 }

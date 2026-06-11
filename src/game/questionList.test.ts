@@ -59,7 +59,7 @@ describe("buildVisibleQuestions", () => {
   });
 
   describe("source = 'both'", () => {
-    it("returns defaults first, then customs", () => {
+    it("returns customs first, then defaults", () => {
       const result = buildVisibleQuestions(
         "both",
         defaultQuestions,
@@ -67,8 +67,8 @@ describe("buildVisibleQuestions", () => {
       );
 
       expect(result.map((entry) => entry.text)).toEqual([
-        ...defaultQuestions,
         ...customQuestions,
+        ...defaultQuestions,
       ]);
     });
 
@@ -80,10 +80,10 @@ describe("buildVisibleQuestions", () => {
       );
 
       expect(result.map((entry) => entry.isCustom)).toEqual([
-        false,
-        false,
         true,
         true,
+        false,
+        false,
       ]);
     });
   });

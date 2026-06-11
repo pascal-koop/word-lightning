@@ -22,6 +22,8 @@ export default function Game() {
     deleteQuestion,
     editQuestion,
     setQuestionSource,
+    manageQuestionSource,
+    setManageQuestionSource,
     goBack,
     addPlayer,
     removePlayer,
@@ -62,8 +64,8 @@ export default function Game() {
         onDeleteQuestion={deleteQuestion}
         onEditQuestion={editQuestion}
         onAddQuestion={addQuestion}
-        questionSource={questionSource}
-        onChangeQuestionSource={setQuestionSource}
+        questionSource={manageQuestionSource}
+        onChangeQuestionSource={setManageQuestionSource}
       />
     );
   }
