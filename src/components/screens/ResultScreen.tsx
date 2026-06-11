@@ -32,7 +32,7 @@ function fireConfetti() {
   frame();
 }
 
-const WINNER_SPLASH_DURATION_MS = 2_200;
+const WINNER_SPLASH_DURATION_MS = 4_200;
 
 export default function ResultScreen({
   players,
@@ -42,9 +42,7 @@ export default function ResultScreen({
   const topScore = ranked[0]?.score ?? 0;
   const hasAnyScore = topScore > 0;
 
-  const winners = hasAnyScore
-    ? ranked.filter((p) => p.score === topScore)
-    : [];
+  const winners = hasAnyScore ? ranked.filter((p) => p.score === topScore) : [];
 
   const winnerLabel =
     winners.length === 1
@@ -138,10 +136,7 @@ export default function ResultScreen({
         </div>
 
         {ranked.length > 0 ? (
-          <ol
-            aria-label="Scoreboard"
-            className="mb-6 flex flex-col gap-2"
-          >
+          <ol aria-label="Scoreboard" className="mb-6 flex flex-col gap-2">
             {ranked.map((player, index) => {
               const isWinner = hasAnyScore && player.score === topScore;
               return (
