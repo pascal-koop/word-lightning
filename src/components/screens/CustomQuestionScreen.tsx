@@ -85,7 +85,7 @@ export default function CustomQuestionScreen({
           onChange={onChangeQuestionSource}
         />
       </div>
-      <ul className="space-y-3">
+      <ul aria-label="Question list" className="space-y-3">
         {visibleQuestions.map((entry) => (
           <QuestionListItem
             key={`${entry.isCustom ? "custom" : "default"}-${entry.text}`}

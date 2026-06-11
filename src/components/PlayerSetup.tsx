@@ -86,6 +86,7 @@ export default function PlayerSetup({
           <button
             type="submit"
             disabled={isAddDisabled}
+            aria-label="Add player"
             className="bg-indigo-600 text-white hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-50"
           >
             Add

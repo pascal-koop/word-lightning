@@ -32,7 +32,7 @@ export default function QuestionSourceToggle({
       <div
         role="radiogroup"
         aria-label="Question source"
-        className="mt-3 grid grid-cols-3 gap-2"
+        className="mt-3 flex justify-center items-center gap-2 md:gap-12"
       >
         {OPTIONS.map((option) => {
           const isActive = questionSource === option.value;

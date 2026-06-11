@@ -40,6 +40,7 @@ export default function reducer(state: GameState, action: Action): GameState {
         // line-up can play multiple games in a row from one setup.
         players: resetScores(state.players),
         pendingScore: false,
+        remainingCards: action.payload.length,
       };
     }
 
@@ -48,7 +49,15 @@ export default function reducer(state: GameState, action: Action): GameState {
 
     case "NEXT_PAIR": {
       if (action.payload.length === 0) return state;
-      return { ...state, pairs: createPairs(action.payload) };
+      const remaining = state.remainingCards - 1;
+      if (remaining <= 0) {
+        return { ...state, phase: "result", pairs: null, pendingScore: false };
+      }
+      return {
+        ...state,
+        pairs: createPairs(action.payload),
+        remainingCards: remaining,
+      };
     }
 
     case "GO_TO_CUSTOM_QUESTION":

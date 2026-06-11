@@ -25,7 +25,7 @@ export default function PlayScreen({
   questionsCount,
   players,
   pendingScore,
-  onEnd,
+  /* onEnd, */
   onSwipe,
   onAwardPoint,
   onNextPair,
@@ -39,7 +39,11 @@ export default function PlayScreen({
   };
 
   return (
-    <div className="flex flex-col items-center justify-center">
+    <div
+      role="region"
+      aria-label="Game play area"
+      className="flex flex-col items-center justify-center"
+    >
       <SwipeCards
         onSwipe={onSwipe}
         questionsCount={questionsCount}
@@ -47,7 +51,7 @@ export default function PlayScreen({
         {...pair}
       />
 
-      <div
+      {/* <div
         // A small live scoreboard above the End-Game button so players
         // see the running totals at a glance. `aria-live="polite"`
         // tells screen readers to announce score updates.
@@ -66,7 +70,7 @@ export default function PlayScreen({
 
       <button className="bg-red-500 text-white mt-10" onClick={onEnd}>
         End Game
-      </button>
+      </button> */}
 
       {pendingScore && (
         <ScorePrompt players={players} onAwardPoint={handleAwardPoint} />
