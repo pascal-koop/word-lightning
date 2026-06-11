@@ -34,7 +34,7 @@ export default function ScorePrompt({
           Tap a player to award them one point and continue.
         </p>
 
-        <ul className="mt-4 flex flex-col gap-2">
+        <ul aria-label="Players" className="mt-4 flex flex-col gap-2">
           {players.map((player) => (
             <li key={player.id}>
               <button

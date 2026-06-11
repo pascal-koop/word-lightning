@@ -102,6 +102,7 @@ describe("reducer", () => {
       history: [],
       players: aliceAndBob,
       pendingScore: true,
+      remainingCards: 3,
     };
 
     it("moves to the result phase", () => {
@@ -130,6 +131,7 @@ describe("reducer", () => {
       history: [],
       players: aliceAndBob,
       pendingScore: false,
+      remainingCards: 3,
     };
 
     it("generates a new pair and keeps the phase on playing", () => {
@@ -276,6 +278,7 @@ describe("reducer", () => {
       history: [],
       players: aliceAndBob,
       pendingScore: false,
+      remainingCards: 3,
     };
 
     it("SWIPE_AWAITING_SCORE flips pendingScore to true", () => {

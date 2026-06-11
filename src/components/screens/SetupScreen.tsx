@@ -154,6 +154,7 @@ export default function SetupScreen({
           <div className="mt-3 grid grid-cols-2 gap-2">
             <button
               type="button"
+              aria-label="Add a new question"
               onClick={() => setIsAddQuestionOpen(true)}
               className="bg-white text-slate-900 ring-1 ring-slate-200 hover:bg-slate-50"
             >
@@ -161,6 +162,7 @@ export default function SetupScreen({
             </button>
             <button
               type="button"
+              aria-label="Manage question list"
               onClick={onGoToCustomQuestions}
               className="bg-white text-slate-900 ring-1 ring-slate-200 hover:bg-slate-50"
             >

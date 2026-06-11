@@ -76,6 +76,7 @@ export default function QuestionListItem({
               value={editValue}
               onChange={(e) => setEditValue(e.target.value)}
               onFocus={() => setIsInputTouched(true)}
+              aria-label="Edit question text"
               aria-invalid={shouldShowValidationError}
               className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-slate-900 outline-none transition focus:border-indigo-400 focus:ring-2 focus:ring-indigo-200"
             />
@@ -126,6 +127,7 @@ export default function QuestionListItem({
           <div className="flex w-full gap-2 md:ml-auto md:w-auto md:shrink-0">
             <button
               className="text-sm disabled:cursor-not-allowed disabled:opacity-50"
+              aria-label={`Edit "${question}"`}
               onClick={() => {
                 setEditValue(question);
                 setIsInputTouched(false);
@@ -137,6 +139,7 @@ export default function QuestionListItem({
             </button>
             <button
               className="text-sm disabled:cursor-not-allowed disabled:opacity-50"
+              aria-label={`Delete "${question}"`}
               onClick={() => setIsDeleteDialogOpen(true)}
               disabled={isDeleting}
               aria-busy={isDeleting}

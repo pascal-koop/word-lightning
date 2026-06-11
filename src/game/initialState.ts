@@ -29,6 +29,9 @@ export type GameState = {
   // decided who scored the point. `pendingScore` is set to `true` by the
   // swipe handler and cleared again by AWARD_POINT.
   pendingScore: boolean;
+  // Tracks how many cards are left in the current round. Decremented on
+  // each NEXT_PAIR; when it hits 0 the game transitions to "result".
+  remainingCards: number;
 };
 
 export const initialState: GameState = {
@@ -37,4 +40,5 @@ export const initialState: GameState = {
   history: [],
   players: [],
   pendingScore: false,
+  remainingCards: 0,
 };

@@ -30,7 +30,11 @@ const SwipeCards = ({
   const visibleCards = cards.slice(-VISIBLE_CARDS);
 
   return (
-    <div className="grid place-items-center">
+    <div
+      role="region"
+      aria-label="Swipe cards"
+      className="grid place-items-center"
+    >
       {visibleCards.map((card) => {
         return (
           <Card
@@ -97,6 +101,8 @@ const Card = ({
   };
   return (
     <motion.div
+      aria-label={`Card: ${letter} – ${question}`}
+      aria-roledescription="swipeable card"
       className={`relative inline-block h-96 w-72 origin-bottom transform-gpu overflow-hidden rounded-3xl border border-white/70 bg-white/80 antialiased ${
         isLocked
           ? "cursor-not-allowed"

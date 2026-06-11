@@ -33,11 +33,12 @@ export default function DeleteQuestionDialog({
   return (
     <dialog
       ref={dialogRef}
+      aria-labelledby="delete-question-dialog-heading"
       className="fixed top-1/2 left-1/2 m-0 w-[92vw] max-w-sm -translate-x-1/2 -translate-y-1/2 rounded-2xl border border-white/60 bg-white/90 p-0 shadow-xl backdrop-blur"
       onClose={onClose}
     >
       <div className="p-4 sm:p-5">
-        <h3 className="text-lg font-bold text-slate-900">Delete question?</h3>
+        <h3 id="delete-question-dialog-heading" className="text-lg font-bold text-slate-900">Delete question?</h3>
         <p className="mt-2 text-sm text-slate-700">
           Are you sure you want to delete this question?
         </p>
@@ -45,7 +46,7 @@ export default function DeleteQuestionDialog({
           {question}
         </p>
         <div className="mt-4 flex justify-end gap-2">
-          <button type="button" onClick={onClose} disabled={isDeleting}>
+          <button type="button" aria-label="Cancel deletion" onClick={onClose} disabled={isDeleting}>
             Cancel
           </button>
           <button

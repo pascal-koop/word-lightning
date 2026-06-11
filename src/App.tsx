@@ -3,7 +3,7 @@ import wordBlitzCenter from "./assets/word_blitz_center.png";
 function App() {
   return (
     <main className="App min-h-screen px-4 py-6 sm:px-3">
-      <header className="mx-auto  flex max-w-4xl items-center justify-between">
+      <header aria-label="Word Blitz" className="mx-auto  flex max-w-4xl items-center justify-between">
         <div className="flex items-center gap-1">
           <div>
             <img

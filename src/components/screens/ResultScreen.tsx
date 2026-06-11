@@ -69,6 +69,7 @@ export default function ResultScreen({
       <AnimatePresence>
         {showSplash && (
           <motion.div
+            aria-label={`${winnerLabel} ${winners.length > 1 ? "win" : "wins"}!`}
             className="pointer-events-none fixed inset-0 z-50 flex flex-col items-center justify-center gap-2"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -112,6 +113,8 @@ export default function ResultScreen({
 
       {/* ── Score card ── */}
       <motion.div
+        role="region"
+        aria-label="Game results"
         className="w-full max-w-md rounded-3xl border border-white/60 bg-white/80 p-6 shadow-xl backdrop-blur"
         initial={hasAnyScore ? { opacity: 0, y: 20 } : undefined}
         animate={{ opacity: 1, y: 0 }}
