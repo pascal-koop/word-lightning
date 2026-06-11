@@ -10,6 +10,9 @@ export default defineConfig({
   // eine Domain, sondern lokal aus dem App-Bundle lädt (capacitor://).
   // Im Web funktioniert das ebenfalls, solange die App im Root deployed wird.
   base: "./",
+  server: {
+    host: true,
+  },
   // Vites Dependency-Scanner würde sonst auch das gebundelte index.html in
   // ios/App/App/public/ einlesen und über optionale Peer-Deps wie
   // "@emotion/is-prop-valid" stolpern, die nur in der Production-Bundle
