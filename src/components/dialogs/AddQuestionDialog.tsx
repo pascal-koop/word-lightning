@@ -5,6 +5,7 @@ type AddQuestionDialogProps = {
   newQuestion: string;
   shouldShowValidationError: boolean;
   validationError: string | null;
+  submitError?: string | null;
   isAddDisabled: boolean;
   isSubmitting: boolean;
   onQuestionChange: (value: string) => void;
@@ -17,6 +18,7 @@ export default function AddQuestionDialog({
   newQuestion,
   shouldShowValidationError,
   validationError,
+  submitError,
   isAddDisabled,
   isSubmitting,
   onQuestionChange,
@@ -47,14 +49,19 @@ export default function AddQuestionDialog({
     >
       <div className="w-full rounded-3xl border border-white/60 bg-white/80 p-5 shadow-xl backdrop-blur sm:p-6">
         <div className="flex flex-col gap-3 text-center">
-          <h2 id="add-question-dialog-heading" className="text-2xl font-black text-slate-900">Add question</h2>
+          <h2
+            id="add-question-dialog-heading"
+            className="text-2xl font-black text-slate-900"
+          >
+            Add question
+          </h2>
           <p>Add a new question to your collection.</p>
           <form className="flex flex-col gap-3" onSubmit={onSubmit}>
             <input
               type="text"
               value={newQuestion}
               onChange={(event) => onQuestionChange(event.target.value)}
-              placeholder="z.B. Ist ein Werkzeug"
+              placeholder="e.g. Is a tool"
               aria-label="New question text"
               className="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-slate-900 shadow-sm outline-none transition focus:border-indigo-400 focus:ring-2 focus:ring-indigo-200"
               aria-invalid={shouldShowValidationError}
@@ -65,6 +72,14 @@ export default function AddQuestionDialog({
             {shouldShowValidationError && (
               <p className="mb-2 text-xs font-semibold text-red-600">
                 {validationError}
+              </p>
+            )}
+            {submitError && (
+              <p
+                role="alert"
+                className="mb-2 text-xs font-semibold text-red-600"
+              >
+                {submitError}
               </p>
             )}
             <button

@@ -13,6 +13,8 @@ export type SettingRecord = {
 
 export type QuestionSource = "default" | "custom" | "both";
 
+export const MAX_CUSTOM_QUESTIONS = 100;
+
 export const SETTINGS_KEYS = {
   questionSource: "questionSource",
 } as const;

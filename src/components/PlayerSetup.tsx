@@ -1,9 +1,6 @@
 import { useState, type FormEvent } from "react";
 import type { Player } from "../game/initialState";
-import {
-  PLAYER_NAME_MAX_LENGTH,
-  validatePlayerName,
-} from "../game/players";
+import { PLAYER_NAME_MAX_LENGTH, validatePlayerName } from "../game/players";
 
 type PlayerSetupProps = {
   players: Player[];
@@ -11,9 +8,6 @@ type PlayerSetupProps = {
   onRemovePlayer: (id: string) => void;
 };
 
-// Maps the small validation reason union to a user-facing message.
-// Centralising it here avoids leaking the internal "reason" strings
-// into the markup.
 function describeValidationError(
   reason: "empty" | "too-long" | "duplicate",
 ): string {
@@ -36,8 +30,7 @@ export default function PlayerSetup({
   const [hasInteracted, setHasInteracted] = useState(false);
 
   const validation = validatePlayerName(name, players);
-  const shouldShowError =
-    hasInteracted && !validation.ok && name.length > 0;
+  const shouldShowError = hasInteracted && !validation.ok && name.length > 0;
   const errorMessage =
     !validation.ok && shouldShowError
       ? describeValidationError(validation.reason)
@@ -56,17 +49,14 @@ export default function PlayerSetup({
   };
 
   return (
-    <section
-      aria-labelledby="player-setup-heading"
-      className="rounded-2xl border border-indigo-100 bg-white px-4 py-3"
-    >
+    <section aria-labelledby="player-setup-heading" className="px-4 py-3">
       <h3
         id="player-setup-heading"
-        className="text-sm font-semibold text-slate-700"
+        className="text-base font-semibold text-slate-700"
       >
         Players
       </h3>
-      <p className="mt-1 text-xs text-slate-500">
+      <p className="mt-1 text-sm text-indigo-600">
         Add at least one player – points are credited after every swipe.
       </p>
 
