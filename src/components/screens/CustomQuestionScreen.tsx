@@ -11,7 +11,7 @@ import type { PlaySelection } from "../../game/playSelection.ts";
 import { findThemeById } from "../../game/themes.ts";
 import BackButton from "../BackButton.tsx";
 
-const PAGE_SIZE = 15;
+const PAGE_SIZE = 10;
 
 type CustomQuestionScreenProps = {
   onBack: () => void;
