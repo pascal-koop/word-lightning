@@ -4,8 +4,7 @@ import reducer from "../game/reducer.ts";
 import { initialState } from "../game/initialState.ts";
 import {
   db,
-  SETTINGS_KEYS,
-  isQuestionSource,
+  MAX_CUSTOM_QUESTIONS,
   type QuestionRecord,
   type QuestionSource,
 } from "../db/db.ts";
@@ -13,6 +12,17 @@ import {
   isDuplicateQuestion,
   validateQuestionInput,
 } from "../game/questionValidation.ts";
+import { THEMES } from "../game/themes.ts";
+import {
+  describeSelection,
+  initialPlaySelection,
+  resolveActiveTexts,
+  type PlaySelection,
+} from "../game/playSelection.ts";
+
+export type AddQuestionResult =
+  | { ok: true }
+  | { ok: false; reason: "invalid" | "duplicate" | "limit" };
 
 export function useGame() {
   const [state, dispatch] = useReducer(reducer, initialState);
@@ -22,45 +32,79 @@ export function useGame() {
     [],
   );
   const customQuestions = useLiveQuery(() => db.customQuestions.toArray(), []);
-  const questionSourceSetting = useLiveQuery(
-    () => db.settings.get(SETTINGS_KEYS.questionSource),
+
+  const isLoading =
+    defaultQuestions === undefined || customQuestions === undefined;
+
+  const [playSelection, setPlaySelection] =
+    useState<PlaySelection>(initialPlaySelection);
+
+  const activeQuestionTexts = useMemo(() => {
+    const standardTexts = (defaultQuestions ?? []).map((q) => q.text);
+    const customTexts = (customQuestions ?? []).map((q) => q.text);
+    return resolveActiveTexts(
+      playSelection,
+      standardTexts,
+      customTexts,
+      THEMES,
+    );
+  }, [defaultQuestions, customQuestions, playSelection]);
+
+  const selectionSummary = useMemo(() => {
+    const standardTexts = (defaultQuestions ?? []).map((q) => q.text);
+    const customTexts = (customQuestions ?? []).map((q) => q.text);
+    return describeSelection(playSelection, standardTexts, customTexts, THEMES);
+  }, [defaultQuestions, customQuestions, playSelection]);
+
+  const selectTheme = useCallback((themeId: string) => {
+    setPlaySelection({ mode: "theme", themeId });
+  }, []);
+
+  const clearTheme = useCallback(() => {
+    setPlaySelection({ mode: "mix", selectedTexts: [] });
+  }, []);
+
+  const setQuestionsSelected = useCallback(
+    (texts: string[], selected: boolean) => {
+      setPlaySelection((current) => {
+        const base = current.mode === "mix" ? current.selectedTexts : [];
+        if (selected) {
+          return {
+            mode: "mix",
+            selectedTexts: [...new Set([...base, ...texts])],
+          };
+        }
+        return {
+          mode: "mix",
+          selectedTexts: base.filter((entry) => !texts.includes(entry)),
+        };
+      });
+    },
     [],
   );
 
-  const isLoading =
-    defaultQuestions === undefined ||
-    customQuestions === undefined ||
-    questionSourceSetting === undefined;
+  const addCustomQuestion = useCallback(
+    async (rawInput: string): Promise<AddQuestionResult> => {
+      const validation = validateQuestionInput(rawInput);
+      if (!validation.success) return { ok: false, reason: "invalid" };
 
-  const questionSource: QuestionSource =
-    questionSourceSetting && isQuestionSource(questionSourceSetting.value)
-      ? questionSourceSetting.value
-      : "default";
+      const count = await db.customQuestions.count();
+      if (count >= MAX_CUSTOM_QUESTIONS) {
+        return { ok: false, reason: "limit" };
+      }
 
-  const activeQuestionTexts = useMemo(() => {
-    const defaultTexts = (defaultQuestions ?? []).map((q) => q.text);
-    const customTexts = (customQuestions ?? []).map((q) => q.text);
-    switch (questionSource) {
-      case "default":
-        return defaultTexts;
-      case "custom":
-        return customTexts;
-      case "both":
-        return [...defaultTexts, ...customTexts];
-    }
-  }, [defaultQuestions, customQuestions, questionSource]);
+      const existingTexts = (await db.customQuestions.toArray()).map(
+        (row) => row.text,
+      );
+      if (isDuplicateQuestion(validation.data, existingTexts)) {
+        return { ok: false, reason: "duplicate" };
+      }
 
-  const addCustomQuestion = useCallback(async (rawInput: string) => {
-    const validation = validateQuestionInput(rawInput);
-    if (!validation.success) return;
-
-    const existingTexts = (await db.customQuestions.toArray()).map(
-      (row) => row.text,
-    );
-    if (isDuplicateQuestion(validation.data, existingTexts)) return;
-
-    await db.customQuestions.add({ text: validation.data } as QuestionRecord);
-  }, []);
+      await db.customQuestions.add({ text: validation.data } as QuestionRecord);
+      return { ok: true };
+    },
+    [],
+  );
 
   const deleteCustomQuestion = useCallback(async (text: string) => {
     await db.customQuestions.where("text").equals(text).delete();
@@ -84,13 +128,6 @@ export function useGame() {
     [],
   );
 
-  const setQuestionSource = useCallback(async (value: QuestionSource) => {
-    await db.settings.put({
-      key: SETTINGS_KEYS.questionSource,
-      value,
-    });
-  }, []);
-
   const [manageQuestionSource, setManageQuestionSource] =
     useState<QuestionSource>("both");
 
@@ -99,14 +136,21 @@ export function useGame() {
     isLoading,
     defaultQuestions: defaultQuestions ?? [],
     customQuestions: customQuestions ?? [],
-    questionSource,
+    customCount: (customQuestions ?? []).length,
+    themes: THEMES,
+    playSelection,
+    selectionSummary,
     activeQuestionTexts,
+    selectTheme,
+    clearTheme,
+    setQuestionsSelected,
     startGame: () =>
       dispatch({ type: "START_GAME", payload: activeQuestionTexts }),
     endGame: () => dispatch({ type: "END_GAME" }),
     nextPair: () =>
       dispatch({ type: "NEXT_PAIR", payload: activeQuestionTexts }),
     goToSetup: () => dispatch({ type: "GO_TO_SETUP" }),
+    goToSelectQuestions: () => dispatch({ type: "GO_TO_SELECT_QUESTIONS" }),
     goToCustomQuestion: () => dispatch({ type: "GO_TO_CUSTOM_QUESTION" }),
     goBack: () => dispatch({ type: "GO_BACK" }),
     addPlayer: (name: string) =>
@@ -119,7 +163,6 @@ export function useGame() {
     addQuestion: addCustomQuestion,
     deleteQuestion: deleteCustomQuestion,
     editQuestion: editCustomQuestion,
-    setQuestionSource,
     manageQuestionSource,
     setManageQuestionSource,
   };

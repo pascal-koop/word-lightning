@@ -2,10 +2,7 @@ import type { Player } from "../game/initialState";
 
 type ScorePromptProps = {
   players: Player[];
-  // We don't actually need the *current* score for the click handler,
-  // but rendering it next to each name gives players continuous feed-
-  // back about who's leading. That's important because the prompt
-  // appears after every swipe.
+
   onAwardPoint: (playerId: string) => void;
 };
 
@@ -18,9 +15,6 @@ export default function ScorePrompt({
       role="dialog"
       aria-modal="true"
       aria-labelledby="score-prompt-heading"
-      // The overlay sits on top of the play area; fixed positioning
-      // makes sure it covers the full viewport on mobile, where the
-      // swipe stack can be scrolled out of view otherwise.
       className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 p-4 backdrop-blur-sm"
     >
       <div className="w-full max-w-sm rounded-3xl border border-white/60 bg-white p-6 shadow-2xl">

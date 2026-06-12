@@ -70,10 +70,6 @@ describe("validatePlayerName", () => {
   });
 
   it("treats accented variants as different names", () => {
-    // The product decision is: "Anna" and "Änna" are *different*
-    // people; only letter case is ignored. This test pins that down
-    // so a future refactor of the comparison logic can't silently
-    // change the meaning.
     const existing = [makePlayer("p-anna", "Anna")];
 
     const result = validatePlayerName("Änna", existing);
@@ -91,9 +87,6 @@ describe("createPlayerId", () => {
   });
 
   it("returns unique values across calls", () => {
-    // Even with the fallback path (counter-based), consecutive calls
-    // must never produce the same id, or the player list would lose
-    // its primary key invariant.
     const ids = new Set([createPlayerId(), createPlayerId(), createPlayerId()]);
 
     expect(ids.size).toBe(3);

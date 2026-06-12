@@ -16,9 +16,7 @@ const SwipeCards = ({
   letter: string;
   question: string;
   questionsCount: number;
-  // When true, the cards cannot be dragged. We use this to pause the
-  // game while the user picks who scored the point on the previous
-  // card – otherwise a fast swiper could skip the score prompt.
+
   isLocked?: boolean;
 }) => {
   const [cards, setCards] = useState<Card[]>(createCardData(questionsCount));
@@ -79,19 +77,9 @@ const Card = ({
     return `${rotateRaw.get() + offSet}deg`;
   });
   const handleDragEnd = () => {
-    // Defensive guard: even though `drag={false}` already prevents
-    // dragging while locked, we double-check here so a flaky touch
-    // event cannot trigger the swipe handler while the score prompt
-    // is open.
     if (isLocked) return;
     if (Math.abs(x.get()) > 50) {
-      // Native "Tack"-Vibration auslösen. Im Browser ist das ein No-Op,
-      // auf iOS gibt es ein dezentes haptisches Signal über die Taptic Engine.
-      // Wir fangen Fehler bewusst still ab, damit eine eventuelle
-      // Plugin-Initialisierungs-Race-Condition das Spiel nicht stört.
-      Haptics.impact({ style: ImpactStyle.Light }).catch(() => {
-        /* haptics nicht verfügbar – ignorieren */
-      });
+      Haptics.impact({ style: ImpactStyle.Light }).catch(() => {});
 
       setCards((prevValue: Card[]) =>
         prevValue.filter((card) => card.id !== id),
@@ -122,9 +110,6 @@ const Card = ({
       animate={{
         scale: isFrontCard ? 1.02 : 0.98,
       }}
-      // Passing `false` to `drag` disables dragging entirely, so the
-      // user gets immediate feedback that the card can't move while
-      // the score prompt is open.
       drag={isLocked ? false : "x"}
       dragConstraints={{ left: 0, right: 0 }}
       onDragEnd={handleDragEnd}

@@ -1,5 +1,6 @@
 import { useGame } from "./hooks/useGame.ts";
 import SetupScreen from "./components/screens/SetupScreen.tsx";
+import SelectQuestionsScreen from "./components/screens/SelectQuestionsScreen.tsx";
 import PlayScreen from "./components/screens/PlayScreen.tsx";
 import ResultScreen from "./components/screens/ResultScreen.tsx";
 import CustomQuestionScreen from "./components/screens/CustomQuestionScreen.tsx";
@@ -11,17 +12,23 @@ export default function Game() {
     isLoading,
     defaultQuestions,
     customQuestions,
-    questionSource,
+    customCount,
+    themes,
+    playSelection,
+    selectionSummary,
     activeQuestionTexts,
+    selectTheme,
+    clearTheme,
+    setQuestionsSelected,
     startGame,
     endGame,
     nextPair,
     addQuestion,
+    goToSelectQuestions,
     goToCustomQuestion,
     goToSetup,
     deleteQuestion,
     editQuestion,
-    setQuestionSource,
     manageQuestionSource,
     setManageQuestionSource,
     goBack,
@@ -42,15 +49,29 @@ export default function Game() {
     return (
       <SetupScreen
         onStart={startGame}
-        onGoToCustomQuestions={goToCustomQuestion}
-        defaultQuestions={defaultQuestionTexts}
-        customQuestions={customQuestionTexts}
-        questionSource={questionSource}
-        onChangeQuestionSource={setQuestionSource}
-        onAddQuestion={addQuestion}
+        onGoToSelectQuestions={goToSelectQuestions}
+        selectionSummary={selectionSummary}
         players={state.players}
         onAddPlayer={addPlayer}
         onRemovePlayer={removePlayer}
+      />
+    );
+  }
+
+  if (state.phase === "select-questions") {
+    return (
+      <SelectQuestionsScreen
+        onBack={goBack}
+        onGoToCustomQuestions={goToCustomQuestion}
+        defaultQuestions={defaultQuestionTexts}
+        customQuestions={customQuestionTexts}
+        customCount={customCount}
+        themes={themes}
+        selection={playSelection}
+        onSelectTheme={selectTheme}
+        onClearTheme={clearTheme}
+        activeCount={activeQuestionTexts.length}
+        onAddQuestion={addQuestion}
       />
     );
   }
@@ -66,6 +87,8 @@ export default function Game() {
         onAddQuestion={addQuestion}
         questionSource={manageQuestionSource}
         onChangeQuestionSource={setManageQuestionSource}
+        selection={playSelection}
+        onSetQuestionsSelected={setQuestionsSelected}
       />
     );
   }

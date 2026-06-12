@@ -1,16 +1,13 @@
 import { createPairs } from "./logic";
 import { type GamePhase, type GameState } from "./initialState";
-import {
-  createPlayerId,
-  resetScores,
-  validatePlayerName,
-} from "./players";
+import { createPlayerId, resetScores, validatePlayerName } from "./players";
 
 type Action =
   | { type: "START_GAME"; payload: string[] }
   | { type: "END_GAME" }
   | { type: "NEXT_PAIR"; payload: string[] }
   | { type: "GO_TO_SETUP" }
+  | { type: "GO_TO_SELECT_QUESTIONS" }
   | { type: "GO_TO_CUSTOM_QUESTION" }
   | { type: "GO_BACK" }
   | { type: "ADD_PLAYER"; payload: string }
@@ -25,10 +22,6 @@ function pushHistory(history: GamePhase[], currentPhase: GamePhase) {
 export default function reducer(state: GameState, action: Action): GameState {
   switch (action.type) {
     case "START_GAME": {
-      // A round only makes sense with at least one question and one
-      // player – otherwise we'd either show "undefined" cards or have
-      // no one to attribute points to. Returning the same reference
-      // lets React skip a re-render in those guard-rail cases.
       if (action.payload.length === 0) return state;
       if (state.players.length === 0) return state;
 
@@ -36,8 +29,6 @@ export default function reducer(state: GameState, action: Action): GameState {
         ...state,
         phase: "playing",
         pairs: createPairs(action.payload),
-        // Starting a new round always resets the scores so the same
-        // line-up can play multiple games in a row from one setup.
         players: resetScores(state.players),
         pendingScore: false,
         remainingCards: action.payload.length,
@@ -59,6 +50,13 @@ export default function reducer(state: GameState, action: Action): GameState {
         remainingCards: remaining,
       };
     }
+
+    case "GO_TO_SELECT_QUESTIONS":
+      return {
+        ...state,
+        phase: "select-questions",
+        history: pushHistory(state.history, state.phase),
+      };
 
     case "GO_TO_CUSTOM_QUESTION":
       return {
@@ -102,23 +100,18 @@ export default function reducer(state: GameState, action: Action): GameState {
     }
 
     case "REMOVE_PLAYER": {
-      const next = state.players.filter((player) => player.id !== action.payload);
-      // Bail out if nothing changed so React can skip a re-render.
+      const next = state.players.filter(
+        (player) => player.id !== action.payload,
+      );
       if (next.length === state.players.length) return state;
       return { ...state, players: next };
     }
 
     case "SWIPE_AWAITING_SCORE":
-      // Already waiting – returning the same reference is a small
-      // optimisation that prevents an unnecessary re-render of the
-      // score prompt while the user is still deciding.
       if (state.pendingScore) return state;
       return { ...state, pendingScore: true };
 
     case "AWARD_POINT": {
-      // Defensive guard: only credit a point when we're actually
-      // waiting for one. Without this guard a stray button press
-      // outside the prompt could rack up points silently.
       if (!state.pendingScore) return state;
 
       const players = state.players.map((player) =>
@@ -126,9 +119,6 @@ export default function reducer(state: GameState, action: Action): GameState {
           ? { ...player, score: player.score + 1 }
           : player,
       );
-      // If no player matched the id we bail out instead of clearing
-      // pendingScore – otherwise a typo in the id would unlock the
-      // swipe without anyone receiving a point.
       const hasMatch = players.some(
         (player, index) => player.score !== state.players[index].score,
       );

@@ -2,22 +2,8 @@ import { describe, expect, it } from "vitest";
 import reducer from "./reducer";
 import { initialState, type GameState, type Player } from "./initialState";
 
-/**
- * A pure reducer is the easiest piece of a React app to test:
- *   - No React, no DOM, no async, no side effects.
- *   - Given the same input (state + action), it must return the same output.
- *
- * Every test below follows the same Arrange / Act / Assert structure:
- *   1. Build an input state and an action.
- *   2. Call the reducer once.
- *   3. Assert something about the returned state.
- */
-
 const sampleQuestions = ["Is blue", "Is in the kitchen", "Is round"];
 
-// A tiny helper so tests don't repeat the player/score boilerplate.
-// We pass plain ids so assertions are easier to write – the reducer
-// doesn't care whether ids come from crypto.randomUUID or a string.
 function makePlayer(id: string, name: string, score = 0): Player {
   return { id, name, score };
 }
@@ -85,7 +71,6 @@ describe("reducer", () => {
     });
 
     it("returns the same state reference when no players have been added yet", () => {
-      // initialState has no players, so the round cannot start.
       const nextState = reducer(initialState, {
         type: "START_GAME",
         payload: sampleQuestions,
@@ -162,6 +147,7 @@ describe("reducer", () => {
   describe("navigation actions", () => {
     it.each([
       ["GO_TO_CUSTOM_QUESTION", "custom-question"],
+      ["GO_TO_SELECT_QUESTIONS", "select-questions"],
       ["GO_TO_SETUP", "setup"],
     ] as const)("%s sets the phase to %s", (actionType, expectedPhase) => {
       const nextState = reducer(initialState, { type: actionType });
@@ -170,9 +156,9 @@ describe("reducer", () => {
     });
 
     it("pushes the previous phase onto the history when navigating", () => {
-      // Coming from "setup" and going to "custom-question" must record
-      // "setup" in the history so a subsequent GO_BACK can return there.
-      const nextState = reducer(initialState, { type: "GO_TO_CUSTOM_QUESTION" });
+      const nextState = reducer(initialState, {
+        type: "GO_TO_CUSTOM_QUESTION",
+      });
 
       expect(nextState.history).toEqual(["setup"]);
     });
@@ -180,7 +166,6 @@ describe("reducer", () => {
 
   describe("GO_BACK", () => {
     it("restores the previous phase from history and pops it off", () => {
-      // The state acts as if the user navigated setup -> custom-question.
       const stateOnCustomQuestion: GameState = {
         ...initialState,
         phase: "custom-question",
@@ -194,9 +179,6 @@ describe("reducer", () => {
     });
 
     it("returns the same state reference when history is empty (nothing to go back to)", () => {
-      // Guard rail: the reducer must not crash when called with an empty
-      // history. Returning the same reference also lets React's
-      // bail-out skip a re-render.
       const nextState = reducer(initialState, { type: "GO_BACK" });
 
       expect(nextState).toBe(initialState);
@@ -290,7 +272,9 @@ describe("reducer", () => {
     it("SWIPE_AWAITING_SCORE returns the same reference when already pending", () => {
       const alreadyPending: GameState = { ...playingState, pendingScore: true };
 
-      const nextState = reducer(alreadyPending, { type: "SWIPE_AWAITING_SCORE" });
+      const nextState = reducer(alreadyPending, {
+        type: "SWIPE_AWAITING_SCORE",
+      });
 
       expect(nextState).toBe(alreadyPending);
     });
@@ -311,8 +295,6 @@ describe("reducer", () => {
     });
 
     it("AWARD_POINT returns the same reference when no score is pending (guard rail)", () => {
-      // playingState has pendingScore === false – a stray AWARD_POINT
-      // must not silently increase the score outside the score prompt.
       const nextState = reducer(playingState, {
         type: "AWARD_POINT",
         payload: "p-alice",

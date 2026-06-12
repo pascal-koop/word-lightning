@@ -3,62 +3,58 @@ import {
   isDuplicateQuestion,
   validateQuestionInput,
 } from "../game/questionValidation";
+import type { AddQuestionResult } from "./useGame";
 
 type UseAddQuestionFormArgs = {
-  // The list a new candidate is checked against. Callers usually pass
-  // the union of default + custom prompts so a custom prompt cannot
-  // collide with a default's text.
   existingQuestions: string[];
-  // The async mutation that actually writes the new prompt (today
-  // backed by Dexie). The hook awaits it and only resets the form
-  // when the promise resolves.
-  onAddQuestion: (rawQuestion: string) => Promise<void>;
-  // Called once the form has been successfully submitted and reset.
-  // We expose it as a separate callback (rather than baking it into
-  // onAddQuestion) so callers can use it to e.g. close a modal.
+  onAddQuestion: (rawQuestion: string) => Promise<AddQuestionResult>;
   onSuccess?: () => void;
 };
 
-// Shared state + validation logic for the "Add a question" form.
-// Both the setup screen's quick-add modal and the manage screen's
-// modal need the exact same behaviour, so pulling it out of the
-// components removes a non-trivial amount of duplication and keeps
-// the validation in lock-step.
+const SUBMIT_ERROR_MESSAGES: Record<
+  Exclude<AddQuestionResult, { ok: true }>["reason"],
+  string
+> = {
+  limit:
+    "You have reached the limit of 100 custom questions. Delete some to add new ones.",
+  duplicate: "This question already exists.",
+  invalid: "This question is invalid.",
+};
+
 export function useAddQuestionForm({
   existingQuestions,
   onAddQuestion,
   onSuccess,
 }: UseAddQuestionFormArgs) {
   const [value, setValue] = useState("");
-  // We only show validation errors after the user has interacted
-  // with the field. This way an empty form doesn't immediately
-  // scream at the user when it first opens.
   const [hasInteracted, setHasInteracted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   const validation = validateQuestionInput(value);
   const isDuplicate = validation.success
     ? isDuplicateQuestion(validation.data, existingQuestions)
     : false;
+
   const validationError = !validation.success
     ? validation.error.issues[0]?.message
     : isDuplicate
-      ? "Question already exists."
-      : null;
+    ? "Question already exists."
+    : null;
+
   const shouldShowValidationError = hasInteracted && Boolean(validationError);
   const isDisabled = !validation.success || isDuplicate || isSubmitting;
 
-  // Wrap setValue so we can flip hasInteracted on first keystroke.
-  // Callers that wire this to an <input>'s onChange get the desired
-  // "show errors after typing" behaviour for free.
   const handleChange = (next: string) => {
     if (!hasInteracted) setHasInteracted(true);
+    if (submitError) setSubmitError(null);
     setValue(next);
   };
 
   const reset = () => {
     setValue("");
     setHasInteracted(false);
+    setSubmitError(null);
   };
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
@@ -66,9 +62,13 @@ export function useAddQuestionForm({
     if (isDisabled) return;
     setIsSubmitting(true);
     try {
-      await onAddQuestion(value);
-      reset();
-      onSuccess?.();
+      const result = await onAddQuestion(value);
+      if (result.ok) {
+        reset();
+        onSuccess?.();
+      } else {
+        setSubmitError(SUBMIT_ERROR_MESSAGES[result.reason]);
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -83,5 +83,6 @@ export function useAddQuestionForm({
     isDisabled,
     shouldShowValidationError,
     validationError,
+    submitError,
   };
 }

@@ -8,20 +8,19 @@ import DeleteQuestionDialog from "./dialogs/DeleteQuestionDialog.tsx";
 export default function QuestionListItem({
   question,
   questions,
-  // Default questions live in a separate Dexie table and the
-  // `addCustomQuestion` / `deleteCustomQuestion` / `editCustomQuestion`
-  // mutations don't touch them. So when `isCustom` is false we hide
-  // the action buttons entirely – clicking them would otherwise look
-  // broken (no error, but nothing changes either). The default value
-  // of `true` preserves the existing behaviour for any caller that
-  // hasn't been updated yet.
+
   isCustom = true,
+
+  isSelectedForPlay,
+  onTogglePlay,
   onEditQuestion,
   onDeleteQuestion,
 }: {
   question: string;
   questions: string[];
   isCustom?: boolean;
+  isSelectedForPlay: boolean;
+  onTogglePlay: (question: string) => void;
   onEditQuestion: (oldQuestion: string, newQuestion: string) => Promise<void>;
   onDeleteQuestion: (question: string) => Promise<void>;
 }) {
@@ -39,8 +38,8 @@ export default function QuestionListItem({
   const validationError = !validation.success
     ? validation.error.issues[0]?.message
     : isDuplicate
-      ? "Question already exists."
-      : null;
+    ? "Question already exists."
+    : null;
   const shouldShowValidationError = isInputTouched && Boolean(validationError);
   const isSaveDisabled = !validation.success || isDuplicate || isSaving;
 
@@ -112,8 +111,15 @@ export default function QuestionListItem({
   return (
     <>
       <li className="flex flex-col gap-3 rounded-2xl bg-[#6365f117] px-4 py-3 md:flex-row md:items-center">
-        <p className="flex w-full items-center gap-2 text-slate-900 wrap-break-word md:min-w-0 md:flex-1">
-          <span className="min-w-0 break-words">{question}</span>
+        <label className="flex w-full items-center gap-3 text-slate-900 wrap-break-word md:min-w-0 md:flex-1">
+          <input
+            type="checkbox"
+            className="h-5 w-5 shrink-0 cursor-pointer accent-indigo-600"
+            checked={isSelectedForPlay}
+            onChange={() => onTogglePlay(question)}
+            aria-label={`"${question}" zum Mitspielen auswählen`}
+          />
+          <span className="min-w-0 wrap-break-word">{question}</span>
           {!isCustom && (
             <span
               aria-label="Default question (read-only)"
@@ -122,7 +128,7 @@ export default function QuestionListItem({
               Default
             </span>
           )}
-        </p>
+        </label>
         {isCustom && (
           <div className="flex w-full gap-2 md:ml-auto md:w-auto md:shrink-0">
             <button
