@@ -1,30 +1,34 @@
 # Word Blitz
 
-A fast, playful word-association game built with **React 19**, **TypeScript** and **Vite**.
-The player is shown a random letter together with a random question (for example
-`M – Is in the kitchen`) and has to come up with a matching word that starts with
-that letter. Cards can be swiped away to get the next pair, and players can manage
-their own collection of questions on top of the built-in ones, maybe spicy ones for a more adult experience. 
+A fast, multiplayer word-association game built with **React 19**, **TypeScript**,
+**Vite** and **shadcn/ui**. Players are shown a random letter together with a
+random question (for example `M – Is in the kitchen`) and race to come up with a
+matching word. Cards are swiped away to advance, points are awarded after each
+round, and themed question packs to keep things fresh.
 
 ---
+
 # [Word Blitz](https://word-blitz-two.vercel.app/) Play it!
+
 ## 1. What the app does (non-technical summary)
 
 Word Blitz is a small, mobile-first browser game that runs entirely on the
 client – no backend, no login, no tracking. From a user perspective the app
-provides four things:
+provides:
 
-1. **A quick game mode.** Tap "Start game" and you get a card with a random
-   letter and a random prompt. Swipe the card to get the next pair. Keep going
-   as long as you like and end the round whenever you want.
-2. **A prompt library.** Every question used in the game is stored locally on
-   the device. A set of default questions ships with the app so the game is
-   immediately playable.
-3. **Your own prompts.** Users can add, edit and delete their own questions
-   through a dedicated screen. All changes are persisted on the device and
-   survive a page reload.
-4. **A question-source switch.** Users can decide whether to play with only the
-   default prompts, only their own prompts, or both combined.
+1. **Multiplayer on one device.** Add two or more players before starting a
+   round. After every swipe a score prompt appears so the group can award a
+   point to whoever came up with the best answer.
+2. **Themed question packs.** Pick a pre-built theme (e.g. _Animals_ or _+18_)
+   or create a custom mix from all available questions before starting.
+3. **A swipe-card game mode.** Each card shows a random letter and a random
+   prompt. Swipe it away to reveal the next one. The round ends automatically
+   when the deck runs out, or players can stop early.
+4. **A prompt library.** A set of default questions ships with the app so the
+   game is immediately playable. Users can also add, edit and delete their own
+   questions through a dedicated management screen.
+5. **A result screen with rankings.** After the round, players are ranked by
+   score with confetti for the winner.
 
 Because everything is stored in the browser (IndexedDB), the app works offline
 after the first load and there is no account setup.
@@ -33,17 +37,21 @@ after the first load and there is no account setup.
 
 ## 2. Technology stack
 
-| Area             | Choice                                                            |
-| ---------------- | ----------------------------------------------------------------- |
-| UI framework     | React 19 (function components + hooks)                            |
-| Language         | TypeScript 5.9 (strict mode)                                      |
-| Build tool       | Vite 7                                                            |
-| Styling          | Tailwind CSS v4 (via `@tailwindcss/vite`)                         |
-| Animation        | `motion` (the successor of Framer Motion) for swipe gestures      |
-| Client-side DB   | IndexedDB via `dexie` + `dexie-react-hooks` (live queries)        |
-| Input validation | `zod` schemas for question text                                   |
-| Mobile shell     | Capacitor 8 (iOS + Android) with haptics, splash and status plugins |
-| Linting          | ESLint 9 with `typescript-eslint` and React Hooks plugins         |
+| Area              | Choice                                                                          |
+| ----------------- | ------------------------------------------------------------------------------- |
+| UI framework      | React 19 (function components + hooks)                                          |
+| Language          | TypeScript 5.9 (strict mode)                                                    |
+| Build tool        | Vite 7                                                                          |
+| Component library | shadcn/ui v4 (radix-luma style) on `@base-ui/react`                             |
+| Styling           | Tailwind CSS v4 (via `@tailwindcss/vite`) + OKLCH design tokens                 |
+| Class composition | `class-variance-authority` (CVA), `clsx`, `tailwind-merge`                      |
+| Font              | Geist Variable (via `@fontsource-variable/geist`)                               |
+| Icons             | `lucide-react` (configured, usage growing)                                      |
+| Animation         | `motion` (the successor of Framer Motion) for swipe gestures + `tw-animate-css` |
+| Client-side DB    | IndexedDB via `dexie` + `dexie-react-hooks` (live queries)                      |
+| Input validation  | `zod` schemas for question and player-name text                                 |
+| Mobile shell      | Capacitor 8 (iOS + Android) with haptics, splash and status plugins             |
+| Linting           | ESLint 9 with `typescript-eslint` and React Hooks plugins                       |
 
 ---
 
@@ -54,51 +62,70 @@ src/
 ├── App.tsx                      # App shell (header + Game container)
 ├── Game.tsx                     # Top-level screen router driven by game phase
 ├── main.tsx                     # Vite entry; bootstraps the database
-├── index.css                    # Tailwind import and global design tokens
+├── index.css                    # Tailwind + shadcn design tokens (OKLCH)
 │
 ├── assets/                      # Static images (logo, card background)
 │
+├── lib/
+│   └── utils.ts                 # cn() helper (clsx + tailwind-merge)
+│
 ├── components/
+│   ├── BackButton.tsx           # Shared back-navigation button
 │   ├── LoadingScreen.tsx        # Accessible spinner while DB hydrates
+│   ├── PlayerSetup.tsx          # Add / remove players before a round
 │   ├── QuestionListItem.tsx     # List row with inline edit + delete flow
 │   ├── QuestionSourceToggle.tsx # Radio group: default / custom / both
+│   ├── ScorePrompt.tsx          # Post-swipe overlay to award a point
 │   ├── SwipeCards.tsx           # Motion-based swipeable card stack
-│   ├── Button.tsx               # Shared button primitive
+│   ├── ThemePicker.tsx          # Theme selection tiles
 │   │
 │   ├── dialogs/
 │   │   ├── AddQuestionDialog.tsx    # <dialog>-based modal for adding a prompt
-│   │   └── DeleteQuestionDialog.tsx # Confirmation modal before deleting
+│   │   ├── DeleteQuestionDialog.tsx # Confirmation modal before deleting
+│   │   └── ThemeSwitchDialog.tsx    # Confirm theme switch when mix is active
 │   │
-│   └── screens/
-│       ├── SetupScreen.tsx          # Landing screen: start / add question
-│       ├── AddQuestionScreen.tsx    # Form to add a new prompt
-│       ├── CustomQuestionScreen.tsx # Full list with CRUD on own prompts
-│       ├── PlaySreen.tsx            # Game screen with the swipe card
-│       └── ResultScreen.tsx         # Shown after the user ends a round
+│   ├── screens/
+│   │   ├── SetupScreen.tsx          # Landing: players + start game
+│   │   ├── SelectQuestionsScreen.tsx# Theme / custom-mix question picker
+│   │   ├── CustomQuestionScreen.tsx # Full list with CRUD on own prompts
+│   │   ├── PlayScreen.tsx           # Game screen with swipe cards + scoring
+│   │   └── ResultScreen.tsx         # Scoreboard with rankings + confetti
+│   │
+│   └── ui/                      # shadcn/ui primitives (radix-luma style)
+│       ├── badge.tsx
+│       ├── button.tsx
+│       ├── card.tsx
+│       └── input.tsx
 │
 ├── db/
 │   └── db.ts                    # Dexie schema, seeding and settings migration
 │
 ├── game/
-│   ├── initialState.ts          # Game state + phase union type
+│   ├── initialState.ts          # Game state, phase union type + Player type
 │   ├── reducer.ts               # Pure reducer for all game transitions
 │   ├── logic.ts                 # Random pair creation (Fisher–Yates shuffle)
+│   ├── players.ts               # Player name validation, ID generation, ranking
+│   ├── playSelection.ts         # Theme / custom-mix resolution logic
+│   ├── questionList.ts          # Build visible question list by source
 │   ├── questions.ts             # Default prompt list used as the DB seed
-│   └── questionValidation.ts    # zod schema + sanitization + duplicate check
+│   ├── questionValidation.ts    # zod schema + sanitization + duplicate check
+│   └── themes.ts                # Built-in theme definitions (Animals, +18, …)
 │
 └── hooks/
-    └── useGame.ts               # Single hook that glues reducer + Dexie together
+    ├── useGame.ts               # Single hook that glues reducer + Dexie together
+    └── useAddQuestionForm.ts    # Reusable form logic for adding a question
 ```
 
 The architectural idea is a clear split between three layers:
 
 - **State machine** (`game/reducer.ts`, `game/initialState.ts`) – pure, testable,
-  no side effects.
+  no side effects. Also includes `players.ts` (name validation, ranking),
+  `playSelection.ts` (theme / custom-mix resolution) and `themes.ts`.
 - **Persistence** (`db/db.ts`) – Dexie/IndexedDB, including schema, seed data and
   a forward-compatible settings migration.
 - **Glue** (`hooks/useGame.ts`) – a custom hook that exposes a single,
   narrow API to the React tree (`state`, `isLoading`, `startGame`,
-  `addQuestion`, `deleteQuestion`, `editQuestion`, `setQuestionSource`, …).
+  `addPlayer`, `removePlayer`, `awardPoint`, `selectTheme`, …).
 
 Screens only talk to this hook; they never touch Dexie or the reducer directly.
 
@@ -114,15 +141,21 @@ strictly typed as one of:
 ```ts
 type GamePhase =
   | "setup"
+  | "select-questions"
   | "playing"
   | "result"
-  | "add-question"
   | "custom-question";
 ```
 
+The typical flow is **setup → select-questions → playing → result**. Users
+can also branch into **custom-question** from the select-questions screen to
+manage their prompt library.
+
 All transitions go through the reducer (`START_GAME`, `END_GAME`, `NEXT_PAIR`,
-`GO_TO_ADD_QUESTION`, `GO_TO_CUSTOM_QUESTION`, `GO_TO_SETUP`), which keeps
-navigation logic in one place and makes it easy to reason about.
+`GO_TO_SELECT_QUESTIONS`, `GO_TO_CUSTOM_QUESTION`, `GO_TO_SETUP`, `GO_BACK`,
+`ADD_PLAYER`, `REMOVE_PLAYER`, `SWIPE_AWAITING_SCORE`, `AWARD_POINT`), which
+keeps navigation logic in one place and makes it easy to reason about. A small
+history stack (last 3 phases) powers the `GO_BACK` action.
 
 ### 4.2 Gameplay
 
@@ -131,11 +164,17 @@ navigation logic in one place and makes it easy to reason about.
   using a Fisher–Yates shuffle.
 - **Swipe to continue.** `SwipeCards` uses `motion`'s `useMotionValue` and
   `useTransform` to rotate and fade the card while dragging. Once the user
-  drags more than 50px, the card is removed from the stack and `NEXT_PAIR` is
-  dispatched, which generates the next letter/question pair.
-- **End game button.** Ends the round and navigates to `ResultScreen`.
+  drags past the threshold, the card is removed and a score prompt appears.
+- **Per-swipe scoring.** After each swipe, `ScorePrompt` shows the player
+  list so the group can award a point to whoever gave the best answer
+  (`SWIPE_AWAITING_SCORE` → `AWARD_POINT`). The next card appears only after
+  a point is awarded.
+- **Remaining-cards counter.** The deck is finite (one card per active
+  question). When the last card is swiped, the round ends automatically.
+- **End game button.** Players can also stop early and navigate to the result
+  screen at any time.
 - **Empty-state protection.** The "Start game" button is disabled when no
-  questions are available, so the game cannot be started into a broken state.
+  questions are available or no players have been added.
 
 ### 4.3 Persistent storage with IndexedDB (Dexie)
 
@@ -179,32 +218,64 @@ A loading state is derived from those three queries being `undefined` and
 surfaced via the `LoadingScreen` component so the UI never flashes an empty
 state during hydration.
 
-### 4.5 Question source toggle (default / custom / both)
+### 4.5 Multiplayer
 
-The `QuestionSourceToggle` is an accessible `role="radiogroup"` with three
-options. The selected value is stored in the `settings` table under the key
-`questionSource` and read back through a live query, so the choice survives a
-page reload. `useGame` derives `activeQuestionTexts` from it:
+`PlayerSetup` on the setup screen lets users add and remove named players
+before a round begins. Names are validated by `players.ts` (min 1, max 24
+characters, no duplicates – case-insensitive). Each player gets a unique ID
+via `crypto.randomUUID()` (with a deterministic fallback). The game requires
+at least one player to start.
+
+Scores are reset to zero at the start of each round (`resetScores`) and the
+result screen uses `rankPlayers` (sort by score, descending) to display the
+final standings.
+
+### 4.6 Themes and play selection
+
+Before starting, users pick **what to play** on the `SelectQuestionsScreen`:
+
+- **Theme mode.** Select a pre-built theme (`themes.ts`) like _Animals_ or
+  _+18_. Only the theme's questions are used for that round.
+- **Custom mix mode.** Hand-pick individual questions from default + custom
+  pools via checkboxes.
+
+The selection is modelled by a `PlaySelection` discriminated union:
 
 ```ts
-switch (questionSource) {
-  case "default":
-    return defaultTexts;
-  case "custom":
-    return customTexts;
-  case "both":
-    return [...defaultTexts, ...customTexts];
-}
+type PlaySelection =
+  | { mode: "theme"; themeId: string }
+  | { mode: "mix"; selectedTexts: string[] };
 ```
 
-### 4.6 Custom question management (CRUD)
+`resolveActiveTexts` in `playSelection.ts` resolves either variant into a
+flat list of question strings that is passed to `START_GAME`. A
+`ThemeSwitchDialog` warns when switching from mix to theme (unsaved
+selections would be lost).
+
+### 4.7 Question source toggle (default / custom / both)
+
+Inside the `CustomQuestionScreen`, a `QuestionSourceToggle` controls which
+pool is visible for management. The selected value is stored in the `settings`
+table under the key `questionSource` and read back through a live query, so
+the choice survives a page reload. `questionList.ts` builds the visible list:
+
+```ts
+function buildVisibleQuestions(
+  source: QuestionSource,
+  defaultQuestions: string[],
+  customQuestions: string[],
+): VisibleQuestion[];
+```
+
+### 4.8 Custom question management (CRUD)
 
 Users can:
 
-- **Create** prompts via `AddQuestionScreen` (inline form) or the
-  `AddQuestionDialog` modal on the custom-question screen.
-- **Read** all their prompts in `CustomQuestionScreen`, which also shows a
-  short preview (last 3 entries) on the add screen.
+- **Create** prompts via the `AddQuestionDialog` modal on the custom-question
+  screen. The form logic is extracted into the reusable `useAddQuestionForm`
+  hook. A hard limit of **100 custom questions** is enforced.
+- **Read** all their prompts in `CustomQuestionScreen` with paginated display
+  (10 per page).
 - **Update** a prompt inline inside `QuestionListItem`, with cancel support
   that restores the original value.
 - **Delete** a prompt via `DeleteQuestionDialog`, which requires an explicit
@@ -215,7 +286,7 @@ All async handlers (`addCustomQuestion`, `editCustomQuestion`,
 `isSubmitting` / `isDeleting` / `isSaving` state so the UI can disable buttons
 and render accessible `aria-busy` states.
 
-### 4.7 Input validation and sanitization
+### 4.9 Input validation and sanitization
 
 Implemented in `src/game/questionValidation.ts` with `zod`:
 
@@ -231,7 +302,7 @@ Implemented in `src/game/questionValidation.ts` with `zod`:
 The same validation is reused in three places (add screen, add dialog, inline
 edit) to keep UX consistent.
 
-### 4.8 Accessibility and UX details
+### 4.10 Accessibility and UX details
 
 - Native `<dialog>` elements with `showModal()` for add and delete flows, so
   focus trapping and the escape key work out of the box.
@@ -241,14 +312,23 @@ edit) to keep UX consistent.
 - Responsive layouts: card width adapts, list rows stack on mobile and become
   horizontal on `md:`.
 
-### 4.9 Design system
+### 4.11 Design system (shadcn/ui)
 
-- Tailwind v4 is configured through `@tailwindcss/vite` with CSS custom
-  properties inside an `@theme` block in `index.css`.
-- A shared button style (rounded, shadow, hover, disabled) is defined once in
-  `index.css` so every `<button>` is on-brand by default.
-- A soft `bg-linear-to-br from-indigo-50 via-white to-pink-50` background is
-  applied globally on `body`.
+The UI is built on **shadcn/ui v4** (radix-luma style) with four primitives
+so far: `Button`, `Card`, `Input` and `Badge` (all in `src/components/ui/`).
+
+- **Tokens.** `index.css` defines an OKLCH-based colour palette via CSS custom
+  properties (`--background`, `--foreground`, `--primary`, `--card`, `--muted`,
+  `--destructive`, etc.) with a purple/indigo hue (~272–281). A full `.dark`
+  variant is defined but not yet toggled in the UI.
+- **Font.** Geist Variable, loaded via `@fontsource-variable/geist`.
+- **Class composition.** Components use `cn()` (`clsx` + `tailwind-merge`) and
+  `class-variance-authority` for variant-based styling (e.g. button variants:
+  `default`, `outline`, `secondary`, `ghost`, `destructive`, `link`).
+- **Layout.** Screens use structured `Card` / `CardHeader` / `CardContent` /
+  `CardFooter` layouts instead of hand-rolled glassmorphism divs.
+- **Path alias.** All imports use the `@/` alias (resolved via Vite +
+  `tsconfig` to `./src/`).
 
 ---
 
@@ -311,13 +391,19 @@ refactoring easier because the test file moves with the implementation.
 Currently covered:
 
 - `src/game/reducer.test.ts` – every action of the game reducer, including
-  history tracking, the `GO_BACK` action, the unknown-action fallback and
-  state immutability.
+  history tracking, the `GO_BACK` action, player management, scoring, the
+  unknown-action fallback and state immutability.
 - `src/game/questionValidation.test.ts` – zod schema, text sanitization, the
   validation wrapper and locale-aware duplicate detection.
 - `src/game/logic.test.ts` – the random pair builder (`createPairs`),
   including a `Math.random` spy to prove the function is the only source
   of randomness.
+- `src/game/players.test.ts` – player name validation, normalization,
+  duplicate detection, ID generation, score reset and ranking.
+- `src/game/playSelection.test.ts` – theme and mix resolution, empty-state
+  detection and selection summary descriptions.
+- `src/game/questionList.test.ts` – building the visible question list by
+  source (default / custom / both).
 
 Vitest is configured inside `vite.config.ts` (via the `test` block) so there
 is a single source of truth for both the dev server and the test runner.
@@ -344,6 +430,16 @@ type SettingRecord = {
 };
 
 type QuestionSource = "default" | "custom" | "both";
+
+type Player = {
+  id: string; // crypto.randomUUID()
+  name: string;
+  score: number;
+};
+
+type PlaySelection =
+  | { mode: "theme"; themeId: string }
+  | { mode: "mix"; selectedTexts: string[] };
 ```
 
 Settings keys are centralized in `SETTINGS_KEYS` and a type guard
@@ -359,25 +455,26 @@ steps for the project, roughly ordered by impact.
 
 ### UX and gameplay
 
-- [ ] **Real result screen.** `ResultScreen` is currently a placeholder. It
-      should show the number of played rounds, the duration and a "play again"
-      call to action.
+- [x] **Real result screen.** `ResultScreen` now shows a ranked scoreboard
+      with confetti for the winner and a "Play again" button.
 - [ ] **Round statistics.** Track how often each prompt was used and expose a
       simple "most played" view.
 - [ ] **Timer per card.** Optional countdown (e.g. 10 seconds) with a visual
       progress indicator to add pressure.
-- [ ] **Score / points system.** Let players mark answers as accepted/rejected
-      and keep a score across a round.
-- [ ] **Multiplayer / pass-and-play.** Let multiple players take turns on the
-      same device with per-player scores.
+- [x] **Score / points system.** After each swipe a `ScorePrompt` lets the
+      group award a point to a player. Scores are tracked across the round.
+- [x] **Multiplayer / pass-and-play.** Players are added on the setup screen
+      via `PlayerSetup`. Each player has a name and a score.
 - [ ] **Keyboard navigation.** Arrow keys or `Space` to advance a card for
       desktop users.
 - [ ] **i18n.** Split UI copy and prompts from the code and ship at least a
       German and an English version.
+- [x] **Themed question packs.** Pre-built themes (Animals, +18) can be
+      selected on the question-selection screen.
 
 ### Data and persistence
 
-- [ ] **Toggle individual default prompts** (enable/disable without deleting).
+- [x] **Toggle individual default prompts** (enable/disable without deleting).
       The data model already supports this – only a `disabled` flag on
       `defaultQuestions` and a filter in `activeQuestionTexts` are missing.
 - [ ] **Bulk import / export** of custom prompts as JSON or CSV, including a
@@ -390,15 +487,19 @@ steps for the project, roughly ordered by impact.
 
 ### Code quality and tooling
 
-- [x] **More unit tests.** `reducer.ts`, `questionValidation.ts` and
-      `logic.ts` (`createPairs`, Fisher–Yates shuffle) are now covered.
-- [ ] **Component tests** for `QuestionListItem` and the two dialogs
+- [x] **More unit tests.** `reducer.ts`, `questionValidation.ts`,
+      `logic.ts`, `players.ts`, `playSelection.ts` and `questionList.ts`
+      are now covered.
+- [x] **shadcn/ui migration.** UI migrated from hand-rolled Tailwind to
+      shadcn/ui v4 primitives (`Button`, `Card`, `Input`, `Badge`) with
+      OKLCH design tokens and the Geist font.
+- [ ] **Component tests** for `QuestionListItem` and the dialogs
       (edit/delete happy path and validation errors) with React Testing
       Library, which also requires adding `jsdom` as the Vitest environment.
-- [ ] **E2E smoke test** with Playwright that covers "add a prompt → start
-      game → swipe → end game".
+- [ ] **E2E smoke test** with Playwright that covers "add players → pick
+      theme → start game → swipe → award point → end game".
 - [ ] **Extract the `<dialog>` boilerplate** into a shared `useModalDialog`
-      hook to deduplicate `AddQuestionDialog` and `DeleteQuestionDialog`.
+      hook to deduplicate the three dialog components.
 - [ ] **PWA support.** Add a manifest and a service worker so the app becomes
       installable and fully offline-capable.
 - [x] **CI pipeline.** A GitHub Actions workflow under

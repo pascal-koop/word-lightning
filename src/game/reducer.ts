@@ -28,6 +28,7 @@ export default function reducer(state: GameState, action: Action): GameState {
       return {
         ...state,
         phase: "playing",
+        direction: "forward",
         pairs: createPairs(action.payload),
         players: resetScores(state.players),
         pendingScore: false,
@@ -36,13 +37,13 @@ export default function reducer(state: GameState, action: Action): GameState {
     }
 
     case "END_GAME":
-      return { ...state, phase: "result", pendingScore: false };
+      return { ...state, phase: "result", direction: "forward", pendingScore: false };
 
     case "NEXT_PAIR": {
       if (action.payload.length === 0) return state;
       const remaining = state.remainingCards - 1;
       if (remaining <= 0) {
-        return { ...state, phase: "result", pairs: null, pendingScore: false };
+        return { ...state, phase: "result", direction: "forward", pairs: null, pendingScore: false };
       }
       return {
         ...state,
@@ -55,6 +56,7 @@ export default function reducer(state: GameState, action: Action): GameState {
       return {
         ...state,
         phase: "select-questions",
+        direction: "forward",
         history: pushHistory(state.history, state.phase),
       };
 
@@ -62,6 +64,7 @@ export default function reducer(state: GameState, action: Action): GameState {
       return {
         ...state,
         phase: "custom-question",
+        direction: "forward",
         history: pushHistory(state.history, state.phase),
       };
 
@@ -69,6 +72,7 @@ export default function reducer(state: GameState, action: Action): GameState {
       return {
         ...state,
         phase: "setup",
+        direction: "back",
         history: pushHistory(state.history, state.phase),
       };
 
@@ -78,6 +82,7 @@ export default function reducer(state: GameState, action: Action): GameState {
       return {
         ...state,
         phase: previousPhase,
+        direction: "back",
         history: state.history.slice(0, -1),
       };
     }

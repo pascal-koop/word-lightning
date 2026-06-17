@@ -11,8 +11,11 @@ export type Player = {
   score: number;
 };
 
+export type NavigationDirection = "forward" | "back";
+
 export type GameState = {
   phase: GamePhase;
+  direction: NavigationDirection;
   pairs: { letter: string; question: string } | null;
   history: GamePhase[];
   players: Player[];
@@ -22,6 +25,7 @@ export type GameState = {
 
 export const initialState: GameState = {
   phase: "setup",
+  direction: "forward",
   pairs: null,
   history: [],
   players: [],

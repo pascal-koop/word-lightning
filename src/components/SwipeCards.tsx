@@ -31,7 +31,7 @@ const SwipeCards = ({
     <div
       role="region"
       aria-label="Swipe cards"
-      className="grid place-items-center"
+      className="grid h-104 w-full place-items-center"
     >
       {visibleCards.map((card) => {
         return (
@@ -123,7 +123,7 @@ const CardItem = ({
         </>
       )}
 
-      <h2 className="absolute top-1/2 left-[15%] w-48 -translate-x-1/2 -translate-y-1/2 -rotate-90 whitespace-nowrap text-center text-3xl font-black text-primary">
+      <h2 className="absolute top-1/2 left-[15%] w-64 -translate-x-1/2 -translate-y-1/2 -rotate-90 text-center text-3xl font-black text-primary">
         {letter} <span className="text-lg text-foreground">{question}</span>
       </h2>
 
@@ -135,7 +135,7 @@ const CardItem = ({
         }`}
       />
 
-      <h2 className="absolute top-1/2 right-[15%] w-48 translate-x-1/2 -translate-y-1/2 rotate-90 whitespace-nowrap text-center text-3xl font-black text-primary">
+      <h2 className="absolute top-1/2 right-[15%] w-64 translate-x-1/2 -translate-y-1/2 rotate-90 text-center text-3xl font-black text-primary">
         {letter} <span className="text-lg text-foreground">{question}</span>
       </h2>
     </motion.div>

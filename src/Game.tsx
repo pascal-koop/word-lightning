@@ -1,3 +1,5 @@
+import { AnimatePresence, motion } from "motion/react";
+import type { NavigationDirection } from "./game/initialState";
 import { useGame } from "./hooks/useGame.ts";
 import SetupScreen from "./components/screens/SetupScreen.tsx";
 import SelectQuestionsScreen from "./components/screens/SelectQuestionsScreen.tsx";
@@ -5,6 +7,21 @@ import PlayScreen from "./components/screens/PlayScreen.tsx";
 import ResultScreen from "./components/screens/ResultScreen.tsx";
 import CustomQuestionScreen from "./components/screens/CustomQuestionScreen.tsx";
 import LoadingScreen from "./components/LoadingScreen.tsx";
+
+const slideVariants = {
+  enter: (direction: NavigationDirection) => ({
+    x: direction === "forward" ? "100%" : "-100%",
+    opacity: 0,
+  }),
+  center: {
+    x: 0,
+    opacity: 1,
+  },
+  exit: (direction: NavigationDirection) => ({
+    x: direction === "forward" ? "-100%" : "100%",
+    opacity: 0,
+  }),
+};
 
 export default function Game() {
   const {
@@ -45,8 +62,10 @@ export default function Game() {
   const customQuestionTexts = customQuestions.map((q) => q.text);
   const defaultQuestionTexts = defaultQuestions.map((q) => q.text);
 
+  let currentScreen: React.ReactNode;
+
   if (state.phase === "setup") {
-    return (
+    currentScreen = (
       <SetupScreen
         onStart={startGame}
         onGoToSelectQuestions={goToSelectQuestions}
@@ -56,10 +75,8 @@ export default function Game() {
         onRemovePlayer={removePlayer}
       />
     );
-  }
-
-  if (state.phase === "select-questions") {
-    return (
+  } else if (state.phase === "select-questions") {
+    currentScreen = (
       <SelectQuestionsScreen
         onBack={goBack}
         onGoToCustomQuestions={goToCustomQuestion}
@@ -74,10 +91,8 @@ export default function Game() {
         onAddQuestion={addQuestion}
       />
     );
-  }
-
-  if (state.phase === "custom-question") {
-    return (
+  } else if (state.phase === "custom-question") {
+    currentScreen = (
       <CustomQuestionScreen
         onBack={goBack}
         defaultQuestions={defaultQuestionTexts}
@@ -91,10 +106,8 @@ export default function Game() {
         onSetQuestionsSelected={setQuestionsSelected}
       />
     );
-  }
-
-  if (state.phase === "playing" && state.pairs) {
-    return (
+  } else if (state.phase === "playing" && state.pairs) {
+    currentScreen = (
       <PlayScreen
         pair={state.pairs}
         questionsCount={activeQuestionTexts.length}
@@ -106,7 +119,23 @@ export default function Game() {
         onNextPair={nextPair}
       />
     );
+  } else {
+    currentScreen = <ResultScreen players={state.players} onRestart={goToSetup} />;
   }
 
-  return <ResultScreen players={state.players} onRestart={goToSetup} />;
+  return (
+    <AnimatePresence mode="wait" custom={state.direction}>
+      <motion.div
+        key={state.phase}
+        custom={state.direction}
+        variants={slideVariants}
+        initial="enter"
+        animate="center"
+        exit="exit"
+        transition={{ type: "tween", duration: 0.25, ease: "easeInOut" }}
+      >
+        {currentScreen}
+      </motion.div>
+    </AnimatePresence>
+  );
 }
