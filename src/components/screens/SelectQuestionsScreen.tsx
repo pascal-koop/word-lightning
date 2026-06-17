@@ -6,6 +6,15 @@ import { MAX_CUSTOM_QUESTIONS } from "../../db/db.ts";
 import type { Theme } from "../../game/themes.ts";
 import type { PlaySelection } from "../../game/playSelection.ts";
 import type { AddQuestionResult } from "../../hooks/useGame.ts";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+  CardFooter,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 
 type SelectQuestionsScreenProps = {
   onBack: () => void;
@@ -51,64 +60,62 @@ export default function SelectQuestionsScreen({
 
   return (
     <div className="flex min-h-[70vh] items-center justify-center px-4">
-      <div className="w-full max-w-md rounded-3xl border border-white/60 bg-white/80 p-6 shadow-xl backdrop-blur">
-        <div className="mb-5 flex items-start justify-between gap-3">
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-widest text-indigo-500">
-              Questions
-            </p>
-            <h2 className="mt-1 text-2xl font-black text-slate-900">
-              What will be played?
-            </h2>
+      <Card className="w-full max-w-md">
+        <CardHeader>
+          <div className="flex items-start justify-between gap-3">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-widest text-primary">
+                Questions
+              </p>
+              <CardTitle className="mt-1 text-2xl font-black">
+                What will be played?
+              </CardTitle>
+            </div>
+            <Badge aria-live="polite">{activeCount} active</Badge>
           </div>
-          <span
-            aria-live="polite"
-            className="shrink-0 rounded-full bg-indigo-50 px-3 py-1 text-xs font-semibold text-indigo-700"
-          >
-            {activeCount} active
-          </span>
-        </div>
+        </CardHeader>
 
-        <ThemePicker
-          themes={themes}
-          selection={selection}
-          onSelectTheme={onSelectTheme}
-          onClearTheme={onClearTheme}
-        />
+        <CardContent className="flex flex-col gap-6">
+          <ThemePicker
+            themes={themes}
+            selection={selection}
+            onSelectTheme={onSelectTheme}
+            onClearTheme={onClearTheme}
+          />
 
-        <section aria-labelledby="mix-heading" className="mt-6">
-          <h4 id="mix-heading" className="text-sm font-semibold text-slate-700">
-            Custom mix
-          </h4>
-          <p className="mt-1 text-xs text-slate-500">
-            Write your own questions and check individual questions in the list
-            to build your own mix.
-          </p>
-          <button
-            type="button"
-            aria-label="Select and manage questions"
-            onClick={onGoToCustomQuestions}
-            className="mt-3 w-full bg-white text-slate-900 ring-1 ring-slate-200 hover:bg-slate-50"
-          >
-            Manage questions
-          </button>
-        </section>
+          <section aria-labelledby="mix-heading">
+            <h4
+              id="mix-heading"
+              className="text-sm font-semibold text-foreground"
+            >
+              Custom mix
+            </h4>
+            <p className="mt-1 text-xs text-muted-foreground">
+              Write your own questions and check individual questions in the list
+              to build your own mix.
+            </p>
+            <Button
+              variant="outline"
+              className="mt-3 w-full"
+              aria-label="Select and manage questions"
+              onClick={onGoToCustomQuestions}
+            >
+              Manage questions
+            </Button>
+          </section>
 
-        {isAtLimit && (
-          <p role="status" className="mt-2 text-center text-xs text-red-600">
-            Limit reached. Delete custom questions to add new ones.
-          </p>
-        )}
+          {isAtLimit && (
+            <p role="status" className="text-center text-xs text-destructive">
+              Limit reached. Delete custom questions to add new ones.
+            </p>
+          )}
+        </CardContent>
 
-        <div className="mt-5">
-          <button
-            type="button"
-            onClick={onBack}
-            className="w-full bg-indigo-600 text-white hover:bg-indigo-700"
-          >
+        <CardFooter>
+          <Button className="w-full" onClick={onBack}>
             Done
-          </button>
-        </div>
+          </Button>
+        </CardFooter>
 
         <AddQuestionDialog
           isOpen={isAddQuestionOpen}
@@ -122,7 +129,7 @@ export default function SelectQuestionsScreen({
           onSubmit={addForm.handleSubmit}
           onClose={handleCloseAddQuestion}
         />
-      </div>
+      </Card>
     </div>
   );
 }

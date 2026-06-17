@@ -1,3 +1,5 @@
+import { Card, CardContent } from "@/components/ui/card";
+
 type LoadingScreenProps = {
   message?: string;
 };
@@ -12,13 +14,15 @@ export default function LoadingScreen({
       aria-live="polite"
       aria-busy="true"
     >
-      <div className="flex flex-col items-center gap-4 rounded-3xl border border-white/60 bg-white/80 px-8 py-10 shadow-xl backdrop-blur">
-        <span
-          aria-hidden="true"
-          className="inline-block h-10 w-10 animate-spin rounded-full border-4 border-indigo-200 border-t-indigo-600"
-        />
-        <p className="text-sm font-semibold text-slate-700">{message}</p>
-      </div>
+      <Card>
+        <CardContent className="flex flex-col items-center gap-4 px-8 py-10">
+          <span
+            aria-hidden="true"
+            className="inline-block size-10 animate-spin rounded-full border-4 border-primary/30 border-t-primary"
+          />
+          <p className="text-sm font-semibold text-foreground">{message}</p>
+        </CardContent>
+      </Card>
     </div>
   );
 }

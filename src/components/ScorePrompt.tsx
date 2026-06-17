@@ -1,8 +1,9 @@
 import type { Player } from "../game/initialState";
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 
 type ScorePromptProps = {
   players: Player[];
-
   onAwardPoint: (playerId: string) => void;
 };
 
@@ -15,40 +16,35 @@ export default function ScorePrompt({
       role="dialog"
       aria-modal="true"
       aria-labelledby="score-prompt-heading"
-      className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 p-4 backdrop-blur-sm"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-foreground/50 p-4 backdrop-blur-sm"
     >
-      <div className="w-full max-w-sm rounded-3xl border border-white/60 bg-white p-6 shadow-2xl">
-        <h2
-          id="score-prompt-heading"
-          className="text-center text-xl font-black text-slate-900"
-        >
-          Who got the point?
-        </h2>
-        <p className="mt-1 text-center text-xs text-slate-500">
-          Tap a player to award them one point and continue.
-        </p>
+      <Card className="w-full max-w-sm">
+        <CardHeader className="text-center">
+          <CardTitle id="score-prompt-heading">Who got the point?</CardTitle>
+          <CardDescription>
+            Tap a player to award them one point and continue.
+          </CardDescription>
+        </CardHeader>
 
-        <ul aria-label="Players" className="mt-4 flex flex-col gap-2">
-          {players.map((player) => (
-            <li key={player.id}>
-              <button
-                type="button"
-                onClick={() => onAwardPoint(player.id)}
-                aria-label={`Award one point to ${player.name}`}
-                className="flex w-full items-center justify-between bg-indigo-600 text-white hover:bg-indigo-700"
-              >
-                <span className="font-semibold">{player.name}</span>
-                <span
-                  aria-hidden="true"
-                  className="rounded-full bg-white/20 px-3 py-1 text-sm"
+        <CardContent>
+          <ul aria-label="Players" className="flex flex-col gap-2">
+            {players.map((player) => (
+              <li key={player.id}>
+                <Button
+                  className="flex w-full items-center justify-between"
+                  onClick={() => onAwardPoint(player.id)}
+                  aria-label={`Award one point to ${player.name}`}
                 >
-                  {player.score}
-                </span>
-              </button>
-            </li>
-          ))}
-        </ul>
-      </div>
+                  <span className="font-semibold">{player.name}</span>
+                  <span className="rounded-full bg-primary-foreground/20 px-3 py-1 text-sm">
+                    {player.score}
+                  </span>
+                </Button>
+              </li>
+            ))}
+          </ul>
+        </CardContent>
+      </Card>
     </section>
   );
 }

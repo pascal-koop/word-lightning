@@ -10,6 +10,15 @@ import type { AddQuestionResult } from "../../hooks/useGame.ts";
 import type { PlaySelection } from "../../game/playSelection.ts";
 import { findThemeById } from "../../game/themes.ts";
 import BackButton from "../BackButton.tsx";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 
 const PAGE_SIZE = 10;
 
@@ -128,107 +137,116 @@ export default function CustomQuestionScreen({
   })();
 
   return (
-    <div className="mx-auto w-full max-w-2xl rounded-3xl border border-white/70 bg-white/80 p-6 shadow-xl backdrop-blur md:p-8">
-      <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h2 className="text-3xl font-black text-slate-900">My Questions</h2>
-          <p
-            className={`mt-1 text-xs font-semibold ${
-              isAtLimit ? "text-red-600" : "text-slate-500"
-            }`}
-          >
-            {customQuestions.length} / {MAX_CUSTOM_QUESTIONS} custom questions
+    <Card className="mx-auto w-full max-w-2xl">
+      <CardHeader>
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <CardTitle className="text-2xl font-black">My Questions</CardTitle>
+            <CardDescription
+              className={isAtLimit ? "text-destructive" : undefined}
+            >
+              {customQuestions.length} / {MAX_CUSTOM_QUESTIONS} custom questions
+            </CardDescription>
+          </div>
+          <div className="flex gap-2">
+            <Button
+              onClick={() => setIsAddQuestionOpen(true)}
+              disabled={isAtLimit}
+              title={
+                isAtLimit
+                  ? `Limit of ${MAX_CUSTOM_QUESTIONS} custom questions reached`
+                  : undefined
+              }
+            >
+              Add question
+            </Button>
+            <BackButton onBack={onBack} />
+          </div>
+        </div>
+      </CardHeader>
+
+      <CardContent className="flex flex-col gap-4">
+        {isAtLimit && (
+          <p role="status" className="text-center text-xs text-destructive">
+            Limit reached. Delete custom questions to add new ones.
           </p>
-        </div>
-        <div className="flex gap-2">
-          <button
-            onClick={() => setIsAddQuestionOpen(true)}
-            disabled={isAtLimit}
-            title={
-              isAtLimit
-                ? `Limit of ${MAX_CUSTOM_QUESTIONS} custom questions reached`
-                : undefined
-            }
-            className="disabled:cursor-not-allowed disabled:opacity-50"
-          >
-            Add question
-          </button>
-          <BackButton onBack={onBack} />
-        </div>
-      </div>
-      {isAtLimit && (
-        <p role="status" className="mb-4 text-center text-xs text-red-600">
-          limit reached. delete custom questions to add new ones.
-        </p>
-      )}
-      <div className="mb-4">
+        )}
+
         <QuestionSourceToggle
           questionSource={questionSource}
           onChange={handleChangeQuestionSource}
         />
-      </div>
-      <p className="mb-4 text-center font-bold text-base text-indigo-600">
-        {selection.mode === "theme"
-          ? `Currently playing the theme „${
-              activeTheme?.name ?? ""
-            }". Check questions to play a custom mix instead.`
-          : "Check questions to play a custom mix instead."}
-      </p>
-      {visibleQuestions.length > 0 && (
-        <label className="mb-3 flex items-center gap-3 rounded-2xl bg-slate-100 px-4 py-3 font-semibold text-slate-800">
-          <SelectAllCheckbox
-            checked={areAllVisibleSelected}
-            indeterminate={areSomeVisibleSelected}
-            onToggle={handleToggleAll}
-          />
-          <span>
-            Select all ({selectedVisibleCount}/{visibleTexts.length})
-          </span>
-        </label>
-      )}
-      <ul aria-label="Question list" className="space-y-3">
-        {pagedQuestions.map((entry) => (
-          <QuestionListItem
-            key={`${entry.isCustom ? "custom" : "default"}-${entry.text}`}
-            question={entry.text}
-            questions={allQuestionTexts}
-            isCustom={entry.isCustom}
-            isSelectedForPlay={isSelectedForPlay(entry.text)}
-            onTogglePlay={handleTogglePlay}
-            onDeleteQuestion={onDeleteQuestion}
-            onEditQuestion={onEditQuestion}
-          />
-        ))}
-      </ul>
-      {totalPages > 1 && (
-        <nav
-          aria-label="Question list pagination"
-          className="mt-4 flex items-center justify-between gap-3"
-        >
-          <button
-            onClick={goToPreviousPage}
-            disabled={safePage === 1}
-            className="disabled:cursor-not-allowed disabled:opacity-50"
-          >
-            Previous
-          </button>
-          <span className="text-sm font-semibold text-slate-600">
-            Page {safePage} of {totalPages}
-          </span>
-          <button
-            onClick={goToNextPage}
-            disabled={safePage === totalPages}
-            className="disabled:cursor-not-allowed disabled:opacity-50"
-          >
-            Next
-          </button>
-        </nav>
-      )}
-      {visibleQuestions.length === 0 && (
-        <p className="rounded-2xl bg-[#6365f117] px-4 py-6 text-center text-slate-600">
-          {emptyStateMessage}
+
+        <p className="text-center text-sm font-semibold text-primary">
+          {selection.mode === "theme"
+            ? `Currently playing the theme „${
+                activeTheme?.name ?? ""
+              }". Check questions to play a custom mix instead.`
+            : "Check questions to play a custom mix instead."}
         </p>
-      )}
+
+        {visibleQuestions.length > 0 && (
+          <label className="flex items-center gap-3 rounded-lg border bg-secondary px-4 py-3 font-semibold text-secondary-foreground">
+            <SelectAllCheckbox
+              checked={areAllVisibleSelected}
+              indeterminate={areSomeVisibleSelected}
+              onToggle={handleToggleAll}
+            />
+            <span>
+              Select all ({selectedVisibleCount}/{visibleTexts.length})
+            </span>
+          </label>
+        )}
+
+        <ul aria-label="Question list" className="flex flex-col gap-3">
+          {pagedQuestions.map((entry) => (
+            <QuestionListItem
+              key={`${entry.isCustom ? "custom" : "default"}-${entry.text}`}
+              question={entry.text}
+              questions={allQuestionTexts}
+              isCustom={entry.isCustom}
+              isSelectedForPlay={isSelectedForPlay(entry.text)}
+              onTogglePlay={handleTogglePlay}
+              onDeleteQuestion={onDeleteQuestion}
+              onEditQuestion={onEditQuestion}
+            />
+          ))}
+        </ul>
+
+        {totalPages > 1 && (
+          <nav
+            aria-label="Question list pagination"
+            className="flex items-center justify-between gap-3"
+          >
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={goToPreviousPage}
+              disabled={safePage === 1}
+            >
+              Previous
+            </Button>
+            <Badge variant="secondary">
+              Page {safePage} of {totalPages}
+            </Badge>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={goToNextPage}
+              disabled={safePage === totalPages}
+            >
+              Next
+            </Button>
+          </nav>
+        )}
+
+        {visibleQuestions.length === 0 && (
+          <p className="rounded-lg border bg-secondary/50 px-4 py-6 text-center text-muted-foreground">
+            {emptyStateMessage}
+          </p>
+        )}
+      </CardContent>
+
       <AddQuestionDialog
         isOpen={isAddQuestionOpen}
         newQuestion={addForm.value}
@@ -247,7 +265,7 @@ export default function CustomQuestionScreen({
         onClose={() => setPendingTexts(null)}
         onConfirm={confirmThemeSwitch}
       />
-    </div>
+    </Card>
   );
 }
 
@@ -270,7 +288,7 @@ function SelectAllCheckbox({
     <input
       ref={ref}
       type="checkbox"
-      className="h-5 w-5 shrink-0 cursor-pointer accent-indigo-600"
+      className="size-5 shrink-0 cursor-pointer accent-primary"
       checked={checked}
       onChange={onToggle}
       aria-label="Select all visible questions"

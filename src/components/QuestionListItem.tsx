@@ -4,6 +4,9 @@ import {
   validateQuestionInput,
 } from "../game/questionValidation";
 import DeleteQuestionDialog from "./dialogs/DeleteQuestionDialog.tsx";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 
 export default function QuestionListItem({
   question,
@@ -67,33 +70,33 @@ export default function QuestionListItem({
 
   if (isEditing) {
     return (
-      <li className="rounded-2xl border border-slate-200 bg-white/70 px-4 py-3">
+      <li className="rounded-lg border bg-card px-4 py-3">
         <div className="flex flex-col gap-3 md:flex-row md:items-start">
           <div className="min-w-0 flex-1">
-            <input
+            <Input
               type="text"
               value={editValue}
               onChange={(e) => setEditValue(e.target.value)}
               onFocus={() => setIsInputTouched(true)}
               aria-label="Edit question text"
               aria-invalid={shouldShowValidationError}
-              className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-slate-900 outline-none transition focus:border-indigo-400 focus:ring-2 focus:ring-indigo-200"
             />
             {shouldShowValidationError && (
-              <p className="mt-2 text-xs text-red-600">{validationError}</p>
+              <p className="mt-2 text-xs text-destructive">{validationError}</p>
             )}
           </div>
           <div className="flex w-full gap-2 md:ml-auto md:w-auto md:shrink-0">
-            <button
-              className="text-sm disabled:cursor-not-allowed disabled:opacity-50"
+            <Button
+              size="sm"
               onClick={handleSave}
               disabled={isSaveDisabled}
               aria-busy={isSaving}
             >
               {isSaving ? "Saving…" : "Save"}
-            </button>
-            <button
-              className="text-sm"
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
               onClick={() => {
                 setIsEditing(false);
                 setIsInputTouched(false);
@@ -102,7 +105,7 @@ export default function QuestionListItem({
               disabled={isSaving}
             >
               Cancel
-            </button>
+            </Button>
           </div>
         </div>
       </li>
@@ -110,29 +113,25 @@ export default function QuestionListItem({
   }
   return (
     <>
-      <li className="flex flex-col gap-3 rounded-2xl bg-[#6365f117] px-4 py-3 md:flex-row md:items-center">
-        <label className="flex w-full items-center gap-3 text-slate-900 wrap-break-word md:min-w-0 md:flex-1">
+      <li className="flex flex-col gap-3 rounded-lg border bg-secondary/50 px-4 py-3 md:flex-row md:items-center">
+        <label className="flex w-full items-center gap-3 text-foreground wrap-break-word md:min-w-0 md:flex-1">
           <input
             type="checkbox"
-            className="h-5 w-5 shrink-0 cursor-pointer accent-indigo-600"
+            className="size-5 shrink-0 cursor-pointer accent-primary"
             checked={isSelectedForPlay}
             onChange={() => onTogglePlay(question)}
             aria-label={`"${question}" zum Mitspielen auswählen`}
           />
           <span className="min-w-0 wrap-break-word">{question}</span>
           {!isCustom && (
-            <span
-              aria-label="Default question (read-only)"
-              className="inline-block shrink-0 rounded-full bg-slate-200 px-2 py-0.5 text-xs font-semibold text-slate-700"
-            >
-              Default
-            </span>
+            <Badge variant="secondary">Default</Badge>
           )}
         </label>
         {isCustom && (
           <div className="flex w-full gap-2 md:ml-auto md:w-auto md:shrink-0">
-            <button
-              className="text-sm disabled:cursor-not-allowed disabled:opacity-50"
+            <Button
+              variant="ghost"
+              size="sm"
               aria-label={`Edit "${question}"`}
               onClick={() => {
                 setEditValue(question);
@@ -142,16 +141,17 @@ export default function QuestionListItem({
               disabled={isDeleting}
             >
               Edit
-            </button>
-            <button
-              className="text-sm disabled:cursor-not-allowed disabled:opacity-50"
+            </Button>
+            <Button
+              variant="destructive"
+              size="sm"
               aria-label={`Delete "${question}"`}
               onClick={() => setIsDeleteDialogOpen(true)}
               disabled={isDeleting}
               aria-busy={isDeleting}
             >
               {isDeleting ? "Deleting…" : "Delete"}
-            </button>
+            </Button>
           </div>
         )}
       </li>

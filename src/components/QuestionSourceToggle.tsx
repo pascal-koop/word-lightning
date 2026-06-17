@@ -1,4 +1,5 @@
 import { type QuestionSource } from "../db/db.ts";
+import { Button } from "@/components/ui/button";
 
 type QuestionSourceToggleProps = {
   questionSource: QuestionSource;
@@ -20,37 +21,32 @@ const OPTIONS: Option[] = [
 export default function QuestionSourceToggle({
   questionSource,
   onChange,
-  withBorder = true,
 }: QuestionSourceToggleProps) {
-  const borderClass = withBorder ? "border border-indigo-100" : "";
   return (
-    <div className={`rounded-2xl ${borderClass} bg-white px-4 py-3`}>
-      <p className="text-sm font-semibold text-slate-700">Question source</p>
-      <p className="mt-1 text-xs text-slate-500">
+    <div className="rounded-lg border bg-card px-4 py-3">
+      <p className="text-sm font-semibold text-foreground">Question source</p>
+      <p className="mt-1 text-xs text-muted-foreground">
         Choose which prompts to play with.
       </p>
       <div
         role="radiogroup"
         aria-label="Question source"
-        className="mt-3 flex justify-center items-center gap-2 md:gap-12"
+        className="mt-3 flex items-center justify-center gap-2 md:gap-4"
       >
         {OPTIONS.map((option) => {
           const isActive = questionSource === option.value;
           return (
-            <button
+            <Button
               key={option.value}
               type="button"
               role="radio"
               aria-checked={isActive}
+              variant={isActive ? "default" : "secondary"}
+              size="sm"
               onClick={() => onChange(option.value)}
-              className={
-                isActive
-                  ? "rounded-xl bg-green-300! text-slate-900! shadow-sm"
-                  : "rounded-xl bg-slate-100 text-slate-700 hover:bg-slate-200"
-              }
             >
               {option.label}
-            </button>
+            </Button>
           );
         })}
       </div>

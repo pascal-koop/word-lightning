@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react";
+import { Button } from "@/components/ui/button";
 
 type ThemeSwitchDialogProps = {
   isOpen: boolean;
@@ -32,32 +33,26 @@ export default function ThemeSwitchDialog({
     <dialog
       ref={dialogRef}
       aria-labelledby="theme-switch-dialog-heading"
-      className="fixed top-1/2 left-1/2 m-0 w-[92vw] max-w-sm -translate-x-1/2 -translate-y-1/2 rounded-2xl border border-white/60 bg-white/90 p-0 shadow-xl backdrop-blur"
+      className="fixed top-1/2 left-1/2 m-0 w-[92vw] max-w-sm -translate-x-1/2 -translate-y-1/2 rounded-xl border bg-card p-0 shadow-xl"
       onClose={onClose}
     >
       <div className="p-4 sm:p-5">
         <h3
           id="theme-switch-dialog-heading"
-          className="text-lg font-bold text-slate-900"
+          className="text-lg font-bold text-foreground"
         >
           Switch to custom mix?
         </h3>
-        <p className="mt-2 text-sm text-slate-700">
+        <p className="mt-2 text-sm text-muted-foreground">
           The theme{" "}
-          <span className="font-semibold text-indigo-600">{themeName}</span> can
-          no longer be played. Instead, you play your own mix.
+          <span className="font-semibold text-primary">{themeName}</span> can no
+          longer be played. Instead, you play your own mix.
         </p>
         <div className="mt-4 flex justify-end gap-2">
-          <button type="button" onClick={onClose}>
+          <Button variant="outline" onClick={onClose}>
             Cancel
-          </button>
-          <button
-            type="button"
-            className="bg-indigo-600 text-white hover:bg-indigo-700"
-            onClick={onConfirm}
-          >
-            Continue
-          </button>
+          </Button>
+          <Button onClick={onConfirm}>Continue</Button>
         </div>
       </div>
     </dialog>

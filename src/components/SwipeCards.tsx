@@ -35,7 +35,7 @@ const SwipeCards = ({
     >
       {visibleCards.map((card) => {
         return (
-          <Card
+          <CardItem
             key={card.id}
             setCards={setCards}
             cards={cards}
@@ -50,7 +50,7 @@ const SwipeCards = ({
     </div>
   );
 };
-const Card = ({
+const CardItem = ({
   id,
   cards,
   setCards,
@@ -91,7 +91,7 @@ const Card = ({
     <motion.div
       aria-label={`Card: ${letter} – ${question}`}
       aria-roledescription="swipeable card"
-      className={`relative inline-block h-96 w-72 origin-bottom transform-gpu overflow-hidden rounded-3xl border border-white/70 bg-white/80 antialiased ${
+      className={`relative inline-block h-96 w-72 origin-bottom transform-gpu overflow-hidden rounded-xl border bg-card antialiased ${
         isLocked
           ? "cursor-not-allowed"
           : "hover:cursor-grab active:cursor-grabbing"
@@ -104,7 +104,7 @@ const Card = ({
         rotate,
         transition: "0.125s transform",
         boxShadow: isFrontCard
-          ? "0 24px 60px -20px rgba(15, 23, 42, 0.45)"
+          ? "0 24px 60px -20px oklch(0.511 0.262 276.966 / 0.35)"
           : "none",
       }}
       animate={{
@@ -114,17 +114,17 @@ const Card = ({
       dragConstraints={{ left: 0, right: 0 }}
       onDragEnd={handleDragEnd}
     >
-      <div className="absolute inset-0 bg-linear-to-br from-indigo-50/70 via-white to-pink-50/70" />
+      <div className="absolute inset-0 bg-linear-to-br from-primary/10 via-card to-accent/20" />
 
       {isFrontCard && (
         <>
-          <div className="absolute left-4 top-4 h-10 w-10 rounded-full bg-indigo-500/20 blur-xl" />
-          <div className="absolute bottom-6 right-6 h-14 w-14 rounded-full bg-pink-400/20 blur-2xl" />
+          <div className="absolute left-4 top-4 size-10 rounded-full bg-primary/20 blur-xl" />
+          <div className="absolute bottom-6 right-6 size-14 rounded-full bg-accent/30 blur-2xl" />
         </>
       )}
 
-      <h2 className="absolute top-1/2 left-[15%] w-48 -translate-x-1/2 -translate-y-1/2 -rotate-90 whitespace-nowrap text-center text-3xl font-black text-indigo-700">
-        {letter} <span className="text-lg text-slate-800">{question}</span>
+      <h2 className="absolute top-1/2 left-[15%] w-48 -translate-x-1/2 -translate-y-1/2 -rotate-90 whitespace-nowrap text-center text-3xl font-black text-primary">
+        {letter} <span className="text-lg text-foreground">{question}</span>
       </h2>
 
       <img
@@ -135,8 +135,8 @@ const Card = ({
         }`}
       />
 
-      <h2 className="absolute top-1/2 right-[15%] w-48 translate-x-1/2 -translate-y-1/2 rotate-90 whitespace-nowrap text-center text-3xl font-black text-indigo-700">
-        {letter} <span className="text-lg text-slate-800">{question}</span>
+      <h2 className="absolute top-1/2 right-[15%] w-48 translate-x-1/2 -translate-y-1/2 rotate-90 whitespace-nowrap text-center text-3xl font-black text-primary">
+        {letter} <span className="text-lg text-foreground">{question}</span>
       </h2>
     </motion.div>
   );

@@ -3,6 +3,15 @@ import { AnimatePresence, motion } from "motion/react";
 import confetti from "canvas-confetti";
 import type { Player } from "../../game/initialState";
 import { rankPlayers } from "../../game/players";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+  CardFooter,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 
 type ResultScreenProps = {
   players: Player[];
@@ -65,7 +74,6 @@ export default function ResultScreen({
 
   return (
     <div className="flex min-h-[70vh] items-center justify-center px-4">
-      {/* ── Winner splash overlay ── */}
       <AnimatePresence>
         {showSplash && (
           <motion.div
@@ -86,7 +94,7 @@ export default function ResultScreen({
             </motion.span>
 
             <motion.h1
-              className="px-4 text-center text-5xl font-black tracking-tight text-indigo-600 drop-shadow-lg sm:text-6xl"
+              className="px-4 text-center text-5xl font-black tracking-tight text-primary drop-shadow-lg sm:text-6xl"
               initial={{ scale: 0.3, opacity: 0, y: 30 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
               transition={{
@@ -100,7 +108,7 @@ export default function ResultScreen({
             </motion.h1>
 
             <motion.p
-              className="text-lg font-semibold text-indigo-400"
+              className="text-lg font-semibold text-primary/70"
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4 }}
@@ -111,11 +119,10 @@ export default function ResultScreen({
         )}
       </AnimatePresence>
 
-      {/* ── Score card ── */}
       <motion.div
         role="region"
         aria-label="Game results"
-        className="w-full max-w-md rounded-3xl border border-white/60 bg-white/80 p-6 shadow-xl backdrop-blur"
+        className="w-full max-w-md"
         initial={hasAnyScore ? { opacity: 0, y: 20 } : undefined}
         animate={{ opacity: 1, y: 0 }}
         transition={
@@ -124,71 +131,72 @@ export default function ResultScreen({
             : undefined
         }
       >
-        <div className="mb-6 text-center">
-          <p className="text-xs font-semibold uppercase tracking-widest text-indigo-500">
-            Round over
-          </p>
-          <h2 className="mt-2 text-3xl font-black text-slate-900">
-            Final scores
-          </h2>
-          {!hasAnyScore && (
-            <p className="mt-2 text-sm text-slate-600">
-              No points were awarded this round.
+        <Card>
+          <CardHeader className="text-center">
+            <p className="text-xs font-semibold uppercase tracking-widest text-primary">
+              Round over
             </p>
-          )}
-        </div>
+            <CardTitle className="text-2xl font-black">Final scores</CardTitle>
+            {!hasAnyScore && (
+              <CardDescription>
+                No points were awarded this round.
+              </CardDescription>
+            )}
+          </CardHeader>
 
-        {ranked.length > 0 ? (
-          <ol aria-label="Scoreboard" className="mb-6 flex flex-col gap-2">
-            {ranked.map((player, index) => {
-              const isWinner = hasAnyScore && player.score === topScore;
-              return (
-                <li
-                  key={player.id}
-                  className={
-                    isWinner
-                      ? "flex items-center justify-between rounded-2xl bg-indigo-600 px-4 py-3 text-white shadow-md"
-                      : "flex items-center justify-between rounded-2xl bg-indigo-50 px-4 py-3 text-slate-900"
-                  }
-                >
-                  <span className="flex items-center gap-3">
-                    <span
-                      aria-hidden="true"
+          <CardContent>
+            {ranked.length > 0 ? (
+              <ol aria-label="Scoreboard" className="flex flex-col gap-2">
+                {ranked.map((player, index) => {
+                  const isWinner = hasAnyScore && player.score === topScore;
+                  return (
+                    <li
+                      key={player.id}
                       className={
                         isWinner
-                          ? "text-lg font-black"
-                          : "text-sm font-semibold text-slate-500"
+                          ? "flex items-center justify-between rounded-lg bg-primary px-4 py-3 text-primary-foreground shadow-md"
+                          : "flex items-center justify-between rounded-lg border bg-secondary px-4 py-3 text-secondary-foreground"
                       }
                     >
-                      #{index + 1}
-                    </span>
-                    <span className="font-semibold">{player.name}</span>
-                  </span>
-                  <span
-                    className={
-                      isWinner
-                        ? "text-2xl font-black"
-                        : "text-xl font-bold text-indigo-700"
-                    }
-                  >
-                    {player.score}
-                  </span>
-                </li>
-              );
-            })}
-          </ol>
-        ) : (
-          <p className="mb-6 rounded-2xl bg-slate-50 px-4 py-3 text-center text-sm text-slate-500">
-            No players were registered for this round.
-          </p>
-        )}
+                      <span className="flex items-center gap-3">
+                        <span
+                          aria-hidden="true"
+                          className={
+                            isWinner
+                              ? "text-lg font-black"
+                              : "text-sm font-semibold text-muted-foreground"
+                          }
+                        >
+                          #{index + 1}
+                        </span>
+                        <span className="font-semibold">{player.name}</span>
+                      </span>
+                      <span
+                        className={
+                          isWinner
+                            ? "text-2xl font-black"
+                            : "text-xl font-bold text-primary"
+                        }
+                      >
+                        {player.score}
+                      </span>
+                    </li>
+                  );
+                })}
+              </ol>
+            ) : (
+              <p className="rounded-lg border bg-muted px-4 py-3 text-center text-sm text-muted-foreground">
+                No players were registered for this round.
+              </p>
+            )}
+          </CardContent>
 
-        <button
-          className="w-full bg-indigo-600 text-white hover:bg-indigo-700"
-          onClick={onRestart}
-        >
-          Play again
-        </button>
+          <CardFooter>
+            <Button className="w-full" onClick={onRestart}>
+              Play again
+            </Button>
+          </CardFooter>
+        </Card>
       </motion.div>
     </div>
   );

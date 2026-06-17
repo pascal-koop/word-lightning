@@ -1,5 +1,6 @@
 import type { Theme } from "../game/themes";
 import type { PlaySelection } from "../game/playSelection";
+import { Button } from "@/components/ui/button";
 
 type ThemePickerProps = {
   themes: Theme[];
@@ -21,21 +22,17 @@ export default function ThemePicker({
       <div className="flex items-center justify-between">
         <h4
           id="themes-heading"
-          className="text-sm font-semibold text-slate-700"
+          className="text-sm font-semibold text-foreground"
         >
           Themes
         </h4>
         {isThemeActive && (
-          <button
-            type="button"
-            onClick={onClearTheme}
-            className="rounded-lg bg-slate-100 px-2 py-1 text-xs font-semibold text-slate-700 hover:bg-slate-200"
-          >
+          <Button variant="ghost" size="sm" onClick={onClearTheme}>
             Clear theme
-          </button>
+          </Button>
         )}
       </div>
-      <p className="mt-1 text-xs text-slate-500">
+      <p className="mt-1 text-xs text-muted-foreground">
         A theme is played without any other questions.
       </p>
       <div
@@ -47,25 +44,22 @@ export default function ThemePicker({
           const isActive =
             selection.mode === "theme" && selection.themeId === theme.id;
           return (
-            <button
+            <Button
               key={theme.id}
               type="button"
               role="radio"
               aria-checked={isActive}
+              variant={isActive ? "default" : "secondary"}
+              className="flex h-auto flex-col py-2"
               onClick={() =>
                 isActive ? onClearTheme() : onSelectTheme(theme.id)
               }
-              className={
-                isActive
-                  ? "rounded-xl bg-green-300! text-slate-900! shadow-sm"
-                  : "rounded-xl bg-slate-100 text-slate-700 hover:bg-slate-200"
-              }
             >
               {theme.name}
-              <span className="block text-[10px] font-normal opacity-70">
+              <span className="text-[10px] font-normal opacity-70">
                 {theme.questions.length} questions
               </span>
-            </button>
+            </Button>
           );
         })}
       </div>
